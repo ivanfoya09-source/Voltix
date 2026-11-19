@@ -1,0 +1,368 @@
+
+{% extends "base.html" %}
+
+{% block title %}Перевірка замовлення — VOLTIX{% endblock %}
+
+
+{% block breadcrumbs %}
+<nav class="container mt-4" aria-label="Breadcrumb">
+    <ol class="breadcrumb">
+
+        <li class="breadcrumb-item">
+            <a href="{% url 'store:home' %}">
+                Головна
+            </a>
+        </li>
+
+        <li class="breadcrumb-item">
+            <a href="{% url 'cart:cart_detail' %}">
+                Кошик
+            </a>
+        </li>
+
+        <li class="breadcrumb-item active"
+            aria-current="page">
+            Перевірка замовлення
+        </li>
+
+    </ol>
+</nav>
+{% endblock %}
+
+
+{% block content %}
+<section class="container checkout-page my-5">
+
+    <!-- Заголовок сторінки -->
+    <div class="checkout-heading">
+        <span class="checkout-eyebrow">
+            VOLTIX CHECKOUT
+        </span>
+
+        <h1>Перевірте замовлення</h1>
+
+        <p>
+            Переконайтеся, що всі дані вказані правильно,
+            і підтвердьте оформлення покупки.
+        </p>
+    </div>
+
+
+    <!-- Етапи оформлення -->
+    <div class="checkout-steps">
+
+        <div class="checkout-step completed">
+            <span class="checkout-step-number">✓</span>
+            <span>Доставка</span>
+        </div>
+
+        <div class="checkout-step-line"></div>
+
+        <div class="checkout-step active">
+            <span class="checkout-step-number">2</span>
+            <span>Перевірка</span>
+        </div>
+
+        <div class="checkout-step-line"></div>
+
+        <div class="checkout-step">
+            <span class="checkout-step-number">3</span>
+            <span>Підтвердження</span>
+        </div>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <!-- Ліва частина -->
+        <div class="col-lg-8">
+
+            <!-- Адреса доставки -->
+            <div class="checkout-card mb-4">
+
+                <div class="checkout-card-heading">
+                    <span>📍</span>
+                    <h2>Доставка</h2>
+                </div>
+
+                <dl class="checkout-details">
+
+                    <div>
+                        <dt>Отримувач</dt>
+                        <dd>{{ checkout_data.full_name }}</dd>
+                    </div>
+
+                    <div>
+                        <dt>Email</dt>
+                        <dd>{{ checkout_data.email }}</dd>
+                    </div>
+
+                    <div>
+                        <dt>Телефон</dt>
+                        <dd>{{ checkout_data.phone }}</dd>
+                    </div>
+
+                    <div>
+                        <dt>Місто</dt>
+                        <dd>{{ checkout_data.city }}</dd>
+                    </div>
+
+                    <div>
+                        <dt>Адреса</dt>
+                        <dd>{{ checkout_data.address }}</dd>
+                    </div>
+
+                    {% if checkout_data.postal_code %}
+                        <div>
+                            <dt>Поштовий індекс</dt>
+                            <dd>{{ checkout_data.postal_code }}</dd>
+                        </div>
+                    {% endif %}
+
+                </dl>
+
+                <a
+                    href="{% url 'orders:checkout_address' %}"
+                    class="btn btn-outline-primary btn-sm"
+                >
+                    ✏️ Змінити адресу
+                </a>
+
+            </div>
+
+
+            <!-- Товари замовлення -->
+            <div class="checkout-card">
+
+                <div class="checkout-card-heading">
+                    <span>🛍️</span>
+                    <h2>Ваші товари</h2>
+                </div>
+
+                {% for item in cart_items %}
+
+                    <div class="checkout-product">
+
+                        <!-- Зображення -->
+                        <div class="checkout-product-image">
+
+                            {% with photo=item.product.images.all|first %}
+
+                                {% if photo %}
+                                    <img
+                                        src="{{ photo.image.url }}"
+                                        alt="{{ item.product.name }}"
+                                        loading="lazy"
+                                    >
+                                {% else %}
+                                    <span>📦</span>
+                                {% endif %}
+
+                            {% endwith %}
+
+                        </div>
+
+
+                        <!-- Інформація -->
+                        <div class="checkout-product-info">
+
+                            <a
+                                href="{% url 'store:product_detail' item.product.slug %}"
+                            >
+                                {{ item.product.name }}
+                            </a>
+
+                            <small>
+                                Кількість: {{ item.quantity }} шт.
+                            </small>
+
+                            <small>
+                                Ціна за одиницю:
+                                {{ item.price }} ₴
+                            </small>
+
+                        </div>
+
+
+                        <!-- Загальна вартість позиції -->
+                        <strong>
+                            {{ item.total_price }} ₴
+                        </strong>
+
+                    </div>
+
+                {% empty %}
+
+                    <div class="alert alert-warning">
+                        У вашому кошику немає товарів.
+                    </div>
+
+                {% endfor %}
+
+                <a
+                    href="{% url 'cart:cart_detail' %}"
+                    class="btn btn-outline-secondary btn-sm mt-4"
+                >
+                    ← Змінити кошик
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- Права частина -->
+        <div class="col-lg-4">
+
+            <div class="checkout-summary">
+
+                <h3>Підсумок замовлення</h3>
+
+
+                <!-- Промокод -->
+                <div class="checkout-coupon-section">
+
+                    <h5 class="mb-3">
+                        🎟️ Промокод
+                    </h5>
+
+                    {% if coupon %}
+
+                        <!-- Застосований промокод -->
+                        <div class="checkout-coupon-applied">
+
+                            <span>
+                                ✓ {{ coupon.code }}
+                                (−{{ coupon.discount_percent }}%)
+                            </span>
+
+                            <form
+                                method="POST"
+                                action="{% url 'orders:remove_coupon' %}"
+                            >
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-link text-danger btn-sm"
+                                >
+                                    Видалити
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    {% else %}
+
+                        <!-- Форма промокоду -->
+                        <form
+                            method="POST"
+                            action="{% url 'orders:apply_coupon' %}"
+                        >
+                            {% csrf_token %}
+
+                            <div class="input-group">
+
+                                {{ coupon_form.code }}
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-outline-primary"
+                                >
+                                    Застосувати
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    {% endif %}
+
+                </div>
+
+
+                <hr>
+
+                <!-- Сума до знижки -->
+                <div class="checkout-price-row">
+
+                    <span>Вартість товарів</span>
+
+                    <strong>
+                        {{ totals.subtotal }} ₴
+                    </strong>
+
+                </div>
+
+                <!-- Знижка -->
+                {% if coupon %}
+
+                    <div class="checkout-price-row discount">
+
+                        <span>
+                            Знижка ({{ totals.discount_percent }}%)
+                        </span>
+
+                        <strong>
+                            −{{ totals.discount_amount }} ₴
+                        </strong>
+
+                    </div>
+
+                {% endif %}
+
+
+                <hr>
+
+                <!-- Остаточна сума -->
+                <div class="checkout-price-row final">
+
+                    <span>Разом за товари</span>
+
+                    <strong>
+                        {{ totals.total }} ₴
+                    </strong>
+
+                </div>
+
+                <!-- Інформація про оплату -->
+                <p class="checkout-summary-hint">
+                    Це навчальне оформлення замовлення.
+                    Онлайн-оплата поки не підключена.
+                    Вартість доставки не включена в суму.
+                </p>
+
+                <!-- Підтвердження замовлення -->
+                <form
+                    method="POST"
+                    action="{% url 'orders:checkout_confirm' %}"
+                >
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary btn-lg w-100 mt-3"
+                    >
+                        ✓ Підтвердити замовлення
+                    </button>
+
+                </form>
+
+                <!-- Повернення до доставки -->
+                <a
+                    href="{% url 'orders:checkout_address' %}"
+                    class="btn btn-outline-secondary w-100 mt-3"
+                >
+                    ← Назад до доставки
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}VOLTIX — Технології для твого світу{% endblock %}
+
+{% block content %}
+<div class="vx-home">
+    <section class="vx-home-hero" aria-labelledby="vx-hero-title">
+        <div class="container vx-home-hero-grid">
+            <div class="vx-home-hero-copy">
+                <span class="vx-home-kicker"><span class="vx-home-kicker-dot"></span> VOLTIX / TECH STORE</span>
+                <h1 id="vx-hero-title">Технології, які <span>рухають вперед.</span></h1>
+                <p>Від потужних ноутбуків до гаджетів на щодень. Обирай свою техніку в одному місці.</p>
+                <div class="vx-home-hero-actions">
+                    <a class="vx-home-btn vx-home-btn-lime" href="{% url 'store:product_list' %}">Дивитися каталог <span aria-hidden="true">↗</span></a>
+                    <a class="vx-home-btn vx-home-btn-ghost" href="#vx-new-arrivals">Переглянути новинки <span aria-hidden="true">↓</span></a>
+                </div>
+                <div class="vx-home-hero-meta"><span>✦ Актуальна техніка</span><span>✦ Зручний вибір</span><span>✦ Доставка по Україні</span></div>
+            </div>
+            <div class="vx-home-hero-art" aria-hidden="true">
+                <div class="vx-home-art-orbit vx-home-art-orbit-one"></div>
+                <div class="vx-home-art-orbit vx-home-art-orbit-two"></div>
+                <div class="vx-home-art-glow"></div>
+                <div class="vx-home-art-bolt">ϟ</div>
+                <span class="vx-home-art-chip vx-home-art-chip-a">NEXT GEN</span>
+                <span class="vx-home-art-chip vx-home-art-chip-b">VOLTIX / 26</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="container vx-home-perks" aria-label="Переваги магазину">
+        <div class="vx-home-perk"><span class="vx-home-perk-icon">🚚</span><div><strong>Доставка по Україні</strong><small>Замовляй звідки зручно</small></div></div>
+        <div class="vx-home-perk"><span class="vx-home-perk-icon">🔒</span><div><strong>Захищені покупки</strong><small>Твій акаунт під контролем</small></div></div>
+        <div class="vx-home-perk"><span class="vx-home-perk-icon">⚡</span><div><strong>Техніка в одному місці</strong><small>Від гаджетів до комплектуючих</small></div></div>
+    </section>
+
+    <section class="container vx-home-section" id="vx-categories" aria-labelledby="vx-categories-title">
+        <div class="vx-home-section-heading"><div><span class="vx-home-eyebrow">ОБИРАЙ СВОЄ</span><h2 id="vx-categories-title">Категорії техніки<span class="vx-home-title-dot">.</span></h2></div><a class="vx-home-text-link" href="{% url 'store:product_list' %}">Весь каталог <span aria-hidden="true">↗</span></a></div>
+        <div class="vx-home-categories">
+            {% for category in categories %}
+                <a class="vx-home-category" href="{% url 'store:product_list' %}?category={{ category.slug|urlencode }}">
+                    <span class="vx-home-category-icon" aria-hidden="true">{% cycle '💻' '📱' '🎧' '🖥️' '⌨️' '🎮' '📷' '🔌' %}</span>
+                    <span class="vx-home-category-name">{{ category.name }}</span>
+                    <span class="vx-home-category-arrow" aria-hidden="true">↗</span>
+                </a>
+            {% empty %}
+                <div class="vx-home-empty">Категорії поки не додані.</div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="container vx-home-section" id="vx-new-arrivals" aria-labelledby="vx-new-title">
+        <div class="vx-home-section-heading"><div><span class="vx-home-eyebrow">ЩО НОВОГО</span><h2 id="vx-new-title">Свіжі надходження<span class="vx-home-title-dot">.</span></h2><p>Останні товари, додані до VOLTIX.</p></div><a class="vx-home-text-link" href="{% url 'store:product_list' %}?sort=newest">Усі новинки <span aria-hidden="true">↗</span></a></div>
+        <div class="vx-home-products">
+            {% for product in products %}
+                {% include 'store/includes/voltix_home_card.html' %}
+            {% empty %}
+                <div class="vx-home-empty">Новинок поки немає. Додай товари через Django Admin.</div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="container vx-home-promo" aria-label="Переглянути каталог">
+        <div><span class="vx-home-eyebrow">YOUR TECH. YOUR RULES.</span><h2>Твій наступний апгрейд <span>починається тут.</span></h2><p>Знайди техніку, яка підходить саме тобі.</p><a href="{% url 'store:product_list' %}" class="vx-home-btn vx-home-btn-dark">Обрати техніку <span aria-hidden="true">↗</span></a></div>
+        <div class="vx-home-promo-mark" aria-hidden="true">V<span>ϟ</span></div>
+    </section>
+
+    <section class="container vx-home-section vx-home-featured" aria-labelledby="vx-featured-title">
+        <div class="vx-home-section-heading"><div><span class="vx-home-eyebrow">ВИБІР VOLTIX</span><h2 id="vx-featured-title">🔥 Хіти продажів<span class="vx-home-title-dot">.</span></h2><p>Товари, які ми виділили для тебе.</p></div><a class="vx-home-text-link" href="{% url 'store:product_list' %}">Дивитися все <span aria-hidden="true">↗</span></a></div>
+        <div class="vx-home-products">
+            {% for product in featured_products %}
+                {% include 'store/includes/voltix_home_card.html' %}
+            {% empty %}
+                <div class="vx-home-empty">Поки немає товарів із позначкою «Хіт».</div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

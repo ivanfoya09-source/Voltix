@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+
+    <title>
+        Статус замовлення №{{ order.id }} — VOLTIX
+    </title>
+</head>
+
+<body style="
+    margin:0;
+    padding:30px 15px;
+    background:#f1f5f9;
+    font-family:Arial,sans-serif;
+    color:#1e293b;
+">
+
+    <table
+        role="presentation"
+        cellpadding="0"
+        cellspacing="0"
+        style="
+            max-width:600px;
+            width:100%;
+            margin:auto;
+            background:#ffffff;
+            border-radius:16px;
+            overflow:hidden;
+        "
+    >
+
+        <tr>
+            <td style="
+                background:#172554;
+                padding:30px;
+                text-align:center;
+            ">
+                <h1 style="
+                    margin:0;
+                    color:white;
+                ">
+                    ⚡ VOLTIX
+                </h1>
+
+                <p style="color:#cbd5e1;">
+                    Оновлення вашого замовлення
+                </p>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding:35px;">
+
+                <h2 style="color:#172554;">
+                    Статус замовлення оновлено!
+                </h2>
+
+                <p>
+                    Вітаємо, {{ order.full_name }}!
+                </p>
+
+                <p>
+                    У вашому замовленні
+                    <strong>№{{ order.id }}</strong>
+                    відбулися зміни.
+                </p>
+
+                <div style="
+                    padding:22px;
+                    background:#eff6ff;
+                    border-radius:12px;
+                    text-align:center;
+                    margin:25px 0;
+                ">
+
+                    <p style="color:#64748b;">
+                        Поточний статус
+                    </p>
+
+                    <h2 style="
+                        margin:8px 0;
+                        color:#2563eb;
+                    ">
+                        {{ order.get_status_display }}
+                    </h2>
+
+                </div>
+
+                {% if order.status == "processing" %}
+                    <p>
+                        Ваше замовлення прийнято
+                        та передано в обробку.
+                    </p>
+                {% elif order.status == "shipped" %}
+                    <p>
+                        Ваше замовлення позначене
+                        як відправлене.
+                    </p>
+                {% elif order.status == "delivered" %}
+                    <p>
+                        Ваше замовлення позначене
+                        як доставлене.
+                    </p>
+                {% elif order.status == "cancelled" %}
+                    <p>
+                        Ваше замовлення скасовано.
+                    </p>
+                {% endif %}
+
+                {% if order.estimated_delivery_date %}
+                    {% if order.status == "shipped" %}
+                        <p style="
+                            padding:15px;
+                            background:#f8fafc;
+                            border-radius:8px;
+                        ">
+                            📅 Орієнтовна дата доставки:
+                            <strong>
+                                {{ order.estimated_delivery_date|date:"d.m.Y" }}
+                            </strong>
+                        </p>
+                    {% endif %}
+                {% endif %}
+
+                <hr style="
+                    border:0;
+                    border-top:1px solid #e2e8f0;
+                    margin:25px 0;
+                ">
+
+                <p>
+                    <strong>
+                        Номер замовлення:
+                    </strong>
+                    №{{ order.id }}
+                </p>
+
+                <p>
+                    <strong>
+                        Сума товарів:
+                    </strong>
+                    {{ order.total }} ₴
+                </p>
+
+                <p style="
+                    margin-top:28px;
+                    font-size:13px;
+                    color:#64748b;
+                ">
+                    Це повідомлення навчального
+                    інтернет-магазину VOLTIX.
+                    Реальна доставка не виконується.
+                </p>
+
+            </td>
+        </tr>
+
+        <tr>
+            <td style="
+                background:#f8fafc;
+                padding:20px;
+                text-align:center;
+                color:#64748b;
+            ">
+                © VOLTIX — навчальний проєкт
+            </td>
+        </tr>
+
+    </table>
+
+</body>
+</html>

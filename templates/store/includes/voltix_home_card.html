@@ -1,0 +1,173 @@
+
+<article class="vx-home-product">
+
+    <!-- ========================================
+         1. ФОТОГРАФІЯ ТОВАРУ
+    ========================================= -->
+    <div class="vx-home-product-media">
+
+        <!-- Позначка ХІТ / НОВИНКА -->
+        {% if product.is_featured %}
+            <span class="vx-home-product-badge">
+                🔥 ХІТ
+            </span>
+        {% else %}
+            <span class="vx-home-product-badge vx-home-product-badge-new">
+                НОВИНКА
+            </span>
+        {% endif %}
+
+        <!-- ====================================
+             КНОПКА ОБРАНОГО ❤️
+        ===================================== -->
+        {% if user.is_authenticated %}
+
+            <form
+                method="post"
+                action="{% url 'wishlist:toggle' product.id %}"
+                class="vx-wishlist-card-form"
+                data-wishlist-form
+            >
+                {% csrf_token %}
+
+                <input
+                    type="hidden"
+                    name="next"
+                    value="{{ request.get_full_path }}"
+                >
+
+                <button
+                    type="submit"
+                    class="vx-wishlist-heart"
+                    data-wishlist-heart
+                    data-product-id="{{ product.id }}"
+                    aria-label="Додати або видалити {{ product.name }} з обраного"
+                    aria-pressed="false"
+                    title="Додати до обраного"
+                >
+                    ♡
+                </button>
+            </form>
+
+        {% else %}
+
+            <a
+                href="{% url 'accounts:login' %}?next={{ request.get_full_path|urlencode }}"
+                class="vx-wishlist-heart vx-wishlist-heart--guest"
+                title="Увійдіть, щоб додати до обраного"
+                aria-label="Увійти, щоб додати {{ product.name }} до обраного"
+            >
+                ♡
+            </a>
+
+        {% endif %}
+
+        <!-- Фотографія товару -->
+        <a
+            href="{% url 'store:product_detail' product.slug %}"
+            aria-label="Переглянути {{ product.name }}"
+        >
+            {% with photo=product.images.all|first %}
+
+                {% if photo %}
+                    <img
+                        src="{{ photo.image.url }}"
+                        alt="{{ photo.alt_text|default:product.name }}"
+                        loading="lazy"
+                    >
+                {% else %}
+                    <span
+                        class="vx-home-product-no-image"
+                        aria-hidden="true"
+                    >
+                        📦
+                    </span>
+                {% endif %}
+
+            {% endwith %}
+        </a>
+
+    </div>
+
+    <!-- ========================================
+         2. ІНФОРМАЦІЯ ПРО ТОВАР
+    ========================================= -->
+    <div class="vx-home-product-body">
+
+        <!-- Категорія -->
+        <span class="vx-home-product-category">
+            {{ product.category.name }}
+        </span>
+
+        <!-- Назва товару -->
+        <h3>
+            <a href="{% url 'store:product_detail' product.slug %}">
+                {{ product.name }}
+            </a>
+        </h3>
+
+        <!-- Наявність -->
+        {% if product.available and product.stock > 0 %}
+            <span class="vx-home-product-stock">
+                ● Є в наявності
+            </span>
+        {% else %}
+            <span class="vx-home-product-stock vx-home-product-out">
+                ● Немає в наявності
+            </span>
+        {% endif %}
+
+        <!-- ====================================
+             3. ЦІНА ТА КОШИК
+        ===================================== -->
+        <div class="vx-home-product-footer">
+
+            <strong class="vx-home-product-price">
+                {{ product.price }}
+                <small>₴</small>
+            </strong>
+
+            {% if product.available and product.stock > 0 %}
+
+                <form
+                    method="post"
+                    action="{% url 'cart:cart_add' product.id %}"
+                    data-ajax-add-to-cart
+                    data-ajax-url="{% url 'cart:ajax_cart_add' product.id %}"
+                >
+                    {% csrf_token %}
+
+                    <input
+                        type="hidden"
+                        name="quantity"
+                        value="1"
+                    >
+
+                    <button
+                        type="submit"
+                        class="vx-home-product-buy"
+                        aria-label="Додати {{ product.name }} до кошика"
+                        title="Додати до кошика"
+                    >
+                        🛒 <span>Купити</span>
+                    </button>
+
+                </form>
+
+            {% else %}
+
+                <button
+                    class="vx-home-product-buy"
+                    type="button"
+                    disabled
+                >
+                    Недоступний
+                </button>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</article>

@@ -1,0 +1,31 @@
+
+VOLTIX — Підтвердження замовлення
+
+Вітаємо, {{ order.full_name }}!
+
+Ваше замовлення №{{ order.id }} успішно створено.
+
+Дата: {{ order.created_at|date:"d.m.Y H:i" }}
+Статус: {{ order.get_status_display }}
+
+ТОВАРИ:
+{% for item in order.items.all %}
+{{ item.product_name }}
+{{ item.quantity }} шт. × {{ item.price }} ₴ = {{ item.get_total_price }} ₴
+
+{% endfor %}
+
+Вартість товарів: {{ order.subtotal }} ₴
+Знижка: {{ order.discount_amount }} ₴
+Разом за товари: {{ order.total }} ₴
+
+ДОСТАВКА:
+Отримувач: {{ order.full_name }}
+Телефон: {{ order.phone }}
+Місто: {{ order.city }}
+Адреса: {{ order.address }}
+Індекс: {{ order.postal_code }}
+
+Це навчальний проєкт. Реальна оплата та доставка не виконуються.
+
+Дякуємо за оформлення замовлення у VOLTIX!

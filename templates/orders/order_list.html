@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}Мої замовлення — VOLTIX{% endblock %}
+
+{% block breadcrumbs %}
+<nav class="container mt-4" aria-label="Breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'store:home' %}">Головна</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'accounts:profile' %}">Мій кабінет</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Мої замовлення
+        </li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<section class="container orders-page my-5">
+
+    <div class="orders-heading">
+        <div>
+            <span class="orders-eyebrow">VOLTIX ACCOUNT</span>
+            <h1>📦 Мої замовлення</h1>
+            <p>
+                Переглядайте покупки та відстежуйте їхній статус.
+            </p>
+        </div>
+
+        <a href="{% url 'store:product_list' %}"
+           class="btn btn-outline-primary">
+            Продовжити покупки
+        </a>
+    </div>
+
+    {% if orders %}
+
+        <div class="orders-list">
+
+            {% for order in orders %}
+
+                <article class="order-card">
+
+                    <div class="order-card-header">
+
+                        <div>
+                            <span class="order-label">
+                                ЗАМОВЛЕННЯ
+                            </span>
+
+                            <h2>№{{ order.id }}</h2>
+
+                            <p>
+                                {{ order.created_at|date:"d.m.Y H:i" }}
+                            </p>
+                        </div>
+
+                        <span class="order-status status-{{ order.status }}">
+                            {{ order.get_status_display }}
+                        </span>
+
+                    </div>
+
+                    <div class="order-card-body">
+
+                        <div class="order-info-block">
+                            <span>Отримувач</span>
+                            <strong>{{ order.full_name }}</strong>
+                        </div>
+
+                        <div class="order-info-block">
+                            <span>Доставка</span>
+                            <strong>{{ order.city }}</strong>
+                        </div>
+
+                        <div class="order-info-block">
+                            <span>Сума замовлення</span>
+                            <strong class="order-price">
+                                {{ order.total }} ₴
+                            </strong>
+                        </div>
+
+                    </div>
+
+                    <div class="order-card-footer">
+
+                        <span>
+                            <i class="order-dot"></i>
+                            {{ order.get_status_display }}
+                        </span>
+
+                        <a
+                            href="{% url 'orders:order_detail' order.id %}"
+                            class="btn btn-primary"
+                        >
+                            Переглянути замовлення →
+                        </a>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+        <!-- Пагінація -->
+        {% if page_obj.has_other_pages %}
+
+            <nav aria-label="Сторінки замовлень"
+                 class="mt-4">
+
+                <ul class="pagination justify-content-center">
+
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?page={{ page_obj.previous_page_number }}">
+                                ← Назад
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    <li class="page-item disabled">
+                        <span class="page-link">
+                            {{ page_obj.number }}
+                            із {{ page_obj.paginator.num_pages }}
+                        </span>
+                    </li>
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?page={{ page_obj.next_page_number }}">
+                                Далі →
+                            </a>
+                        </li>
+                    {% endif %}
+
+                </ul>
+            </nav>
+
+        {% endif %}
+
+    {% else %}
+
+        <div class="orders-empty">
+
+            <div class="orders-empty-icon">📦</div>
+
+            <h2>Поки немає замовлень</h2>
+
+            <p>
+                Коли ви оформите першу покупку,
+                вона з'явиться тут.
+            </p>
+
+            <a
+                href="{% url 'store:product_list' %}"
+                class="btn btn-primary btn-lg"
+            >
+                Перейти до каталогу
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</section>
+{% endblock %}

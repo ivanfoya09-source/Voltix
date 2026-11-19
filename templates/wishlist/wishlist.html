@@ -1,0 +1,141 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Обрані товари — VOLTIX{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/voltix-wishlist.css' %}">
+
+<section class="vx-wishlist container my-4 my-lg-5">
+
+    <div class="vx-wishlist-heading">
+
+        <a href="{% url 'store:product_list' %}"
+           class="vx-wishlist-back">
+            ← До каталогу
+        </a>
+
+        <span class="vx-wishlist-eyebrow">
+            ⚡ VOLTIX / ОСОБИСТІ ТОВАРИ
+        </span>
+
+        <h1>Обрані товари <span>❤️</span></h1>
+
+        <p>
+            Зберігайте товари, які сподобалися,
+            та повертайтеся до них у будь-який момент.
+        </p>
+
+    </div>
+
+    {% if wishlist_items %}
+
+        <div class="vx-wishlist-grid">
+
+            {% for item in wishlist_items %}
+
+                <article class="vx-wishlist-card">
+
+                    <a href="{% url 'store:product_detail' item.product.slug %}"
+                       class="vx-wishlist-image">
+
+                        {% with photo=item.product.images.all|first %}
+
+                            {% if photo %}
+                                <img
+                                    src="{{ photo.image.url }}"
+                                    alt="{{ photo.alt_text|default:item.product.name }}"
+                                    loading="lazy"
+                                >
+                            {% else %}
+                                <span class="vx-wishlist-no-photo">
+                                    📦
+                                </span>
+                            {% endif %}
+
+                        {% endwith %}
+
+                    </a>
+
+                    <div class="vx-wishlist-card-content">
+
+                        <span class="vx-wishlist-category">
+                            {{ item.product.category.name }}
+                        </span>
+
+                        <a href="{% url 'store:product_detail' item.product.slug %}"
+                           class="vx-wishlist-product-name">
+                            {{ item.product.name }}
+                        </a>
+
+                        <div class="vx-wishlist-price">
+                            {{ item.product.price }} ₴
+                        </div>
+
+                        {% if item.product.stock > 0 %}
+                            <span class="vx-wishlist-stock">
+                                ✓ У наявності
+                            </span>
+                        {% else %}
+                            <span class="vx-wishlist-stock vx-wishlist-stock--no">
+                                Немає в наявності
+                            </span>
+                        {% endif %}
+
+                        <form
+                            method="post"
+                            action="{% url 'wishlist:toggle' item.product.id %}"
+                            class="vx-wishlist-remove-form"
+                        >
+                            {% csrf_token %}
+
+                            <input
+                                type="hidden"
+                                name="next"
+                                value="{{ request.get_full_path }}"
+                            >
+
+                            <button
+                                type="submit"
+                                class="vx-wishlist-remove"
+                            >
+                                ♡ Видалити з обраного
+                            </button>
+                        </form>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="vx-wishlist-empty">
+
+            <div class="vx-wishlist-empty-icon">
+                ♡
+            </div>
+
+            <h2>Ваш список обраного порожній</h2>
+
+            <p>
+                Перегляньте каталог VOLTIX і збережіть товари,
+                які вам сподобалися.
+            </p>
+
+            <a href="{% url 'store:product_list' %}">
+                Перейти до каталогу
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

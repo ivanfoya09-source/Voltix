@@ -1,0 +1,18 @@
+/* VOLTIX — головна точка підключення стилів.
+   Не додавай стилі сюди: редагуй тематичні файли нижче. */
+@import url("variables.css");
+@import url("base.css");
+@import url("header.css");
+@import url("home.css");
+@import url("products.css");
+@import url("catalog.css");
+@import url("auth.css");
+@import url("breadcrumbs.css");
+@import url("footer.css");
+@import url("animations.css");
+@import url("product_detail.css");
+@import url("cart.css");
+@import url("recently_viewed.css");
+@import url("checkout.css");
+@import url("orders.css");
+@import url("voltix-redesign.css");

@@ -1,0 +1,13 @@
+/* Підвал сайту */
+.site-footer {
+    position: relative;
+    margin-top: 76px;
+    padding: 49px 0 38px;
+    background: linear-gradient(135deg, #101b34, #0b1428);
+    color: #eaf0ff;
+    border-top: 3px solid #4668f6;
+}
+.site-footer h5 { margin-bottom: 10px; color: #fff; font-size: 1.35rem; font-weight: 850; letter-spacing: -.045em; }
+.site-footer p { color: #b5c2dc; margin-bottom: 10px; }
+.site-footer small { color: #8f9db8; }
+@media (max-width: 575.98px) { .site-footer { margin-top: 50px; padding: 38px 0 32px; } }

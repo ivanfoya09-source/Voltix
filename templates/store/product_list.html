@@ -1,0 +1,1066 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Каталог техніки — VOLTIX{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ==========================================
+       VOLTIX — CATALOG PRODUCT GRID
+       18 товарів: 3 колонки × 6 рядів
+    ========================================== */
+
+    @media (min-width: 992px) {
+        .vx-catalog .vx-catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 20px;
+        }
+    }
+
+    @media (min-width: 576px) and (max-width: 991px) {
+        .vx-catalog .vx-catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+    }
+
+    @media (max-width: 575px) {
+        .vx-catalog .vx-catalog-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 14px;
+        }
+    }
+
+    /* ==========================================
+       VOLTIX — WISHLIST HEART
+    ========================================== */
+
+    .vx-catalog-product .vx-catalog-image-area {
+        position: relative;
+    }
+
+    .vx-catalog-product .vx-catalog-wishlist-form {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        left: auto;
+        z-index: 10;
+        width: auto;
+        margin: 0;
+    }
+
+    .vx-catalog-product .vx-catalog-wishlist-guest {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        left: auto;
+        z-index: 10;
+    }
+
+    .vx-catalog-product .vx-wishlist-heart {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 42px;
+        padding: 0;
+        background: #fff;
+        color: #69758c;
+        border: 1px solid #e5eaf3;
+        border-radius: 50%;
+        box-shadow: 0 4px 14px rgba(20, 35, 60, .1);
+        font-size: 27px;
+        line-height: 1;
+        text-decoration: none;
+        cursor: pointer;
+        transition:
+            color .2s ease,
+            background .2s ease,
+            border-color .2s ease,
+            transform .2s ease;
+    }
+
+    .vx-catalog-product .vx-wishlist-heart:hover {
+        color: #e64670;
+        background: #fff1f5;
+        transform: scale(1.08);
+    }
+
+    .vx-catalog-product .vx-wishlist-heart.is-active {
+        color: #e64670;
+        background: #fff1f5;
+        border-color: #f3bfd0;
+    }
+
+    .vx-catalog-product .vx-wishlist-heart:disabled {
+        opacity: .6;
+        cursor: wait;
+        transform: none;
+    }
+
+    .vx-catalog-product .vx-catalog-featured {
+        left: 12px;
+        right: auto;
+    }
+
+    @media (max-width: 640px) {
+        .vx-catalog-product .vx-wishlist-heart {
+            width: 36px;
+            height: 36px;
+            font-size: 23px;
+        }
+
+        .vx-catalog-product .vx-catalog-wishlist-form,
+        .vx-catalog-product .vx-catalog-wishlist-guest {
+            top: 9px;
+            right: 9px;
+        }
+    }
+
+    /* ==========================================
+       VOLTIX — PAGINATION
+    ========================================== */
+
+    .vx-catalog-pagination {
+        padding: 25px 0 30px;
+    }
+
+    .vx-catalog-pagination .pagination {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+
+    .vx-catalog-pagination .page-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 43px;
+        min-height: 43px;
+        padding: 10px 15px;
+        border: 1px solid #e4eaf3;
+        border-radius: 11px;
+        background: #fff;
+        color: #34445e;
+        font-size: 13px;
+        font-weight: 800;
+        text-decoration: none;
+        transition:
+            background .2s ease,
+            border-color .2s ease,
+            color .2s ease;
+    }
+
+    .vx-catalog-pagination .page-link:hover {
+        background: #edf3ff;
+        border-color: #9bbcff;
+        color: #225fe0;
+    }
+
+    .vx-catalog-pagination .page-item.active .page-link {
+        background: #397bff;
+        border-color: #397bff;
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(57, 123, 255, .2);
+    }
+
+    .vx-catalog-pagination .page-link:focus-visible {
+        outline: 3px solid #9bbcff;
+        outline-offset: 2px;
+        box-shadow: none;
+    }
+
+    .vx-catalog-pagination-info {
+        color: #72809a;
+        text-align: center;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    @media (max-width: 575px) {
+        .vx-catalog-pagination .page-link {
+            min-width: 36px;
+            min-height: 38px;
+            padding: 8px 11px;
+            font-size: 12px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .vx-catalog-product .vx-wishlist-heart,
+        .vx-catalog-pagination .page-link {
+            transition: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<nav
+    class="container vx-catalog-breadcrumb"
+    aria-label="Навігаційний шлях"
+>
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item">
+            <a href="{% url 'store:home' %}">
+                Головна
+            </a>
+        </li>
+
+        <li
+            class="breadcrumb-item active"
+            aria-current="page"
+        >
+            Каталог
+        </li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+
+<section
+    class="container vx-catalog"
+    id="catalog-top"
+>
+
+    <!-- ==========================================
+         01. ЗАГОЛОВОК КАТАЛОГУ
+    ========================================== -->
+
+    <div class="vx-catalog-intro">
+
+        <div>
+            <span class="vx-catalog-eyebrow">
+                VOLTIX / ВИБІР ТЕХНІКИ
+            </span>
+
+            <h1>
+                Знайди свою наступну технологію<span class="vx-catalog-accent">.</span>
+            </h1>
+
+            <p>
+                Смартфони, ноутбуки, комп'ютерні комплектуючі
+                й аксесуари — все в одному каталозі.
+            </p>
+        </div>
+
+        <div
+            class="vx-catalog-intro-art"
+            aria-hidden="true"
+        >
+            <span>⚡</span>
+        </div>
+
+    </div>
+
+    <!-- ==========================================
+         02. ПОШУК
+    ========================================== -->
+
+    <form
+        class="vx-catalog-search"
+        method="get"
+        action="{% url 'store:product_list' %}"
+        role="search"
+    >
+
+        <label
+            for="vx-catalog-query"
+            class="visually-hidden"
+        >
+            Пошук товарів
+        </label>
+
+        <svg
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+        >
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m16 16 5 5"></path>
+        </svg>
+
+        <input
+            id="vx-catalog-query"
+            type="search"
+            name="q"
+            value="{{ query }}"
+            placeholder="Яку техніку шукаєш? ASUS, Logitech, iPhone..."
+        >
+
+        {% if selected_category %}
+            <input
+                type="hidden"
+                name="category"
+                value="{{ selected_category }}"
+            >
+        {% endif %}
+
+        {% if min_price %}
+            <input
+                type="hidden"
+                name="min_price"
+                value="{{ min_price }}"
+            >
+        {% endif %}
+
+        {% if max_price %}
+            <input
+                type="hidden"
+                name="max_price"
+                value="{{ max_price }}"
+            >
+        {% endif %}
+
+        <input
+            type="hidden"
+            name="sort"
+            value="{{ sort }}"
+        >
+
+        <button type="submit">
+            Знайти
+        </button>
+
+    </form>
+
+    <!-- ==========================================
+         03. КАТАЛОГ І ФІЛЬТРИ
+    ========================================== -->
+
+    <div class="vx-catalog-layout">
+
+        <!-- ======================================
+             ЛІВА ПАНЕЛЬ — ФІЛЬТРИ
+        ======================================= -->
+
+        <aside
+            class="vx-catalog-sidebar"
+            id="vx-catalog-filters"
+            aria-label="Фільтри каталогу"
+        >
+
+            <div class="vx-catalog-filter-head">
+
+                <h2>Фільтри</h2>
+
+                <a href="{% url 'store:product_list' %}">
+                    Скинути
+                </a>
+
+            </div>
+
+            <!-- КАТЕГОРІЇ -->
+            <div class="vx-catalog-sidebar-section">
+
+                <h3>Категорії</h3>
+
+                <a
+                    class="vx-catalog-category {% if not selected_category %}is-active{% endif %}"
+                    href="{% url 'store:product_list' %}"
+                >
+                    <span>Усі товари</span>
+                    <span aria-hidden="true">↗</span>
+                </a>
+
+                {% for category in categories %}
+
+                    <div class="vx-catalog-category-group">
+
+                        <a
+                            class="vx-catalog-category {% if selected_category == category.slug %}is-active{% endif %}"
+                            href="{% url 'store:product_list' %}?category={{ category.slug|urlencode }}"
+                        >
+                            <span>{{ category.name }}</span>
+                            <span aria-hidden="true">›</span>
+                        </a>
+
+                        {% for child in category.get_children %}
+
+                            <a
+                                class="vx-catalog-subcategory {% if selected_category == child.slug %}is-active{% endif %}"
+                                href="{% url 'store:product_list' %}?category={{ child.slug|urlencode }}"
+                            >
+                                {{ child.name }}
+                            </a>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% empty %}
+
+                    <p class="vx-catalog-hint">
+                        Категорії поки не додані.
+                    </p>
+
+                {% endfor %}
+
+            </div>
+
+            <!-- ФІЛЬТР ЗА ЦІНОЮ -->
+            <div class="vx-catalog-sidebar-section">
+
+                <h3>Ціна, ₴</h3>
+
+                <form
+                    method="get"
+                    action="{% url 'store:product_list' %}"
+                    class="vx-catalog-price-form"
+                >
+
+                    <input
+                        type="hidden"
+                        name="q"
+                        value="{{ query }}"
+                    >
+
+                    <input
+                        type="hidden"
+                        name="category"
+                        value="{{ selected_category }}"
+                    >
+
+                    <input
+                        type="hidden"
+                        name="sort"
+                        value="{{ sort }}"
+                    >
+
+                    <div class="vx-catalog-price-fields">
+
+                        <label>
+                            Від
+
+                            <input
+                                type="number"
+                                name="min_price"
+                                min="0"
+                                step="0.01"
+                                value="{{ min_price }}"
+                                placeholder="0"
+                            >
+                        </label>
+
+                        <label>
+                            До
+
+                            <input
+                                type="number"
+                                name="max_price"
+                                min="0"
+                                step="0.01"
+                                value="{{ max_price }}"
+                                placeholder="50000"
+                            >
+                        </label>
+
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="vx-catalog-filter-submit"
+                    >
+                        Застосувати
+                    </button>
+
+                </form>
+
+            </div>
+
+            <!-- ІНФОРМАЦІЙНИЙ БЛОК -->
+            <div class="vx-catalog-sidebar-note">
+
+                <strong>⚡ VOLTIX</strong>
+
+                <span>
+                    Зручний вибір техніки для кожного дня.
+                </span>
+
+            </div>
+
+        </aside>
+
+        <!-- ======================================
+             ПРАВА ЧАСТИНА — ТОВАРИ
+        ======================================= -->
+
+        <div class="vx-catalog-main">
+
+            <!-- ==================================
+                 ПАНЕЛЬ КАТАЛОГУ
+            =================================== -->
+
+            <div class="vx-catalog-toolbar">
+
+                <div class="vx-catalog-count">
+
+                    <span class="vx-catalog-count-kicker">
+                        ПІДБІРКА ТОВАРІВ
+                    </span>
+
+                    <strong>
+                        Знайдено: {{ total_products }}
+                    </strong>
+
+                    {% if query %}
+                        <small>
+                            Запит: «{{ query }}»
+                        </small>
+                    {% endif %}
+
+                </div>
+
+                <div class="vx-catalog-toolbar-controls">
+
+                    <!-- МОБІЛЬНА КНОПКА ФІЛЬТРІВ -->
+                    <button
+                        type="button"
+                        class="vx-catalog-mobile-filters"
+                        data-vx-filter-toggle
+                        aria-controls="vx-catalog-filters"
+                        aria-expanded="false"
+                    >
+                        ☷ Фільтри
+                    </button>
+
+                    <!-- СОРТУВАННЯ -->
+                    <form
+                        method="get"
+                        action="{% url 'store:product_list' %}"
+                        class="vx-catalog-sort"
+                    >
+
+                        <input
+                            type="hidden"
+                            name="q"
+                            value="{{ query }}"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="category"
+                            value="{{ selected_category }}"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="min_price"
+                            value="{{ min_price }}"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="max_price"
+                            value="{{ max_price }}"
+                        >
+
+                        <label for="vx-sort">
+                            Сортувати:
+                        </label>
+
+                        <select
+                            id="vx-sort"
+                            name="sort"
+                            onchange="this.form.submit()"
+                        >
+
+                            <option
+                                value="newest"
+                                {% if sort == 'newest' %}selected{% endif %}
+                            >
+                                Спочатку нові
+                            </option>
+
+                            <option
+                                value="oldest"
+                                {% if sort == 'oldest' %}selected{% endif %}
+                            >
+                                Спочатку старі
+                            </option>
+
+                            <option
+                                value="price_asc"
+                                {% if sort == 'price_asc' %}selected{% endif %}
+                            >
+                                Від дешевих
+                            </option>
+
+                            <option
+                                value="price_desc"
+                                {% if sort == 'price_desc' %}selected{% endif %}
+                            >
+                                Від дорогих
+                            </option>
+
+                            <option
+                                value="name"
+                                {% if sort == 'name' %}selected{% endif %}
+                            >
+                                За назвою
+                            </option>
+
+                        </select>
+
+                        <noscript>
+                            <button type="submit">
+                                Сортувати
+                            </button>
+                        </noscript>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            <!-- ==================================
+                 АКТИВНІ ФІЛЬТРИ
+            =================================== -->
+
+            {% if selected_category or query or min_price or max_price %}
+
+                <div class="vx-catalog-active-filters">
+
+                    <span>Активні параметри</span>
+
+                    {% if selected_category %}
+
+                        <span class="vx-catalog-filter-chip">
+                            Категорія: {{ selected_category }}
+                        </span>
+
+                    {% endif %}
+
+                    {% if query %}
+
+                        <span class="vx-catalog-filter-chip">
+                            Пошук: {{ query }}
+                        </span>
+
+                    {% endif %}
+
+                    {% if min_price %}
+
+                        <span class="vx-catalog-filter-chip">
+                            Від {{ min_price }} ₴
+                        </span>
+
+                    {% endif %}
+
+                    {% if max_price %}
+
+                        <span class="vx-catalog-filter-chip">
+                            До {{ max_price }} ₴
+                        </span>
+
+                    {% endif %}
+
+                    <a href="{% url 'store:product_list' %}">
+                        Очистити всі
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+            <!-- ==================================
+                 04. СІТКА ТОВАРІВ
+                 3 КАРТКИ В РЯДУ
+            =================================== -->
+
+            <div class="vx-catalog-grid">
+
+                {% for product in products %}
+
+                    <article class="vx-catalog-product">
+
+                        <!-- ФОТОГРАФІЯ ТОВАРУ -->
+                        <div class="vx-catalog-image-area">
+
+                            {% if product.is_featured %}
+
+                                <span class="vx-catalog-featured">
+                                    🔥 Хіт
+                                </span>
+
+                            {% endif %}
+
+                            <!-- =========================
+                                 WISHLIST ❤️
+                            ========================== -->
+
+                            {% if user.is_authenticated %}
+
+                                <form
+                                    method="post"
+                                    action="{% url 'wishlist:toggle' product.id %}"
+                                    class="vx-catalog-wishlist-form"
+                                    data-wishlist-form
+                                >
+
+                                    {% csrf_token %}
+
+                                    <input
+                                        type="hidden"
+                                        name="next"
+                                        value="{{ request.get_full_path }}"
+                                    >
+
+                                    <button
+                                        type="submit"
+                                        class="vx-wishlist-heart {% if product.id in wishlist_product_ids %}is-active{% endif %}"
+                                        data-wishlist-heart
+                                        data-product-id="{{ product.id }}"
+                                        aria-pressed="{% if product.id in wishlist_product_ids %}true{% else %}false{% endif %}"
+                                        aria-label="Змінити обране: {{ product.name }}"
+                                        title="{% if product.id in wishlist_product_ids %}Видалити з обраного{% else %}Додати до обраного{% endif %}"
+                                    >
+                                        {% if product.id in wishlist_product_ids %}♥{% else %}♡{% endif %}
+                                    </button>
+
+                                </form>
+
+                            {% else %}
+
+                                <a
+                                    href="{% url 'accounts:login' %}?next={{ request.get_full_path|urlencode }}"
+                                    class="vx-wishlist-heart vx-catalog-wishlist-guest"
+                                    title="Увійдіть, щоб додати до обраного"
+                                    aria-label="Увійти, щоб додати {{ product.name }} до обраного"
+                                >
+                                    ♡
+                                </a>
+
+                            {% endif %}
+
+                            <!-- ЗОБРАЖЕННЯ -->
+                            <a
+                                href="{% url 'store:product_detail' product.slug %}"
+                                aria-label="Переглянути {{ product.name }}"
+                            >
+
+                                {% with photo=product.images.all|first %}
+
+                                    {% if photo %}
+
+                                        <img
+                                            src="{{ photo.image.url }}"
+                                            alt="{{ photo.alt_text|default:product.name }}"
+                                            loading="lazy"
+                                        >
+
+                                    {% else %}
+
+                                        <span
+                                            class="vx-catalog-no-image"
+                                            aria-label="Немає фотографії"
+                                        >
+                                            📦
+                                        </span>
+
+                                    {% endif %}
+
+                                {% endwith %}
+
+                            </a>
+
+                        </div>
+
+                        <!-- ==================================
+                             ІНФОРМАЦІЯ ПРО ТОВАР
+                        =================================== -->
+
+                        <div class="vx-catalog-product-body">
+
+                            <!-- КАТЕГОРІЯ -->
+                            <span class="vx-catalog-product-category">
+                                {{ product.category.name }}
+                            </span>
+
+                            <!-- НАЗВА -->
+                            <h3>
+                                <a href="{% url 'store:product_detail' product.slug %}">
+                                    {{ product.name }}
+                                </a>
+                            </h3>
+
+                            <!-- НАЯВНІСТЬ -->
+                            {% if product.available and product.stock > 0 %}
+
+                                <span class="vx-catalog-product-stock is-available">
+                                    ● Є в наявності
+                                </span>
+
+                            {% else %}
+
+                                <span class="vx-catalog-product-stock is-unavailable">
+                                    ● Немає в наявності
+                                </span>
+
+                            {% endif %}
+
+                            <!-- ЦІНА -->
+                            <div class="vx-catalog-product-price">
+                                {{ product.price }}
+                                <span>₴</span>
+                            </div>
+
+                            <!-- ДІЇ -->
+                            <div class="vx-catalog-product-actions">
+
+                                {% if product.available and product.stock > 0 %}
+
+                                    <!-- AJAX-КОШИК -->
+                                    <form
+                                        method="post"
+                                        action="{% url 'cart:cart_add' product.id %}"
+                                        data-ajax-add-to-cart
+                                        data-ajax-url="{% url 'cart:ajax_cart_add' product.id %}"
+                                    >
+
+                                        {% csrf_token %}
+
+                                        <input
+                                            type="hidden"
+                                            name="quantity"
+                                            value="1"
+                                        >
+
+                                        <button
+                                            type="submit"
+                                            class="vx-catalog-buy"
+                                        >
+                                            🛒 У кошик
+                                        </button>
+
+                                    </form>
+
+                                {% else %}
+
+                                    <button
+                                        class="vx-catalog-buy"
+                                        type="button"
+                                        disabled
+                                    >
+                                        Недоступний
+                                    </button>
+
+                                {% endif %}
+
+                                <!-- ДЕТАЛІ ТОВАРУ -->
+                                <a
+                                    class="vx-catalog-details"
+                                    href="{% url 'store:product_detail' product.slug %}"
+                                    aria-label="Детальніше про {{ product.name }}"
+                                    title="Детальніше"
+                                >
+                                    ↗
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                {% empty %}
+
+                    <!-- НІЧОГО НЕ ЗНАЙДЕНО -->
+                    <div class="vx-catalog-empty">
+
+                        <span>🔎</span>
+
+                        <h3>Нічого не знайдено</h3>
+
+                        <p>
+                            Спробуй змінити запит або
+                            налаштування фільтрів.
+                        </p>
+
+                        <a href="{% url 'store:product_list' %}">
+                            Показати всі товари
+                        </a>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+            <!-- ==================================
+                 05. ПАГІНАЦІЯ
+            =================================== -->
+
+            {% if page_obj.paginator.num_pages > 1 %}
+
+                <nav
+                    class="vx-catalog-pagination"
+                    aria-label="Сторінки каталогу"
+                >
+
+                    <ul class="pagination">
+
+                        <!-- ПЕРША СТОРІНКА -->
+                        {% if page_obj.number > 3 %}
+
+                            <li class="page-item">
+
+                                <a
+                                    class="page-link"
+                                    href="?{% if page_query %}{{ page_query }}&amp;{% endif %}page=1#catalog-top"
+                                    aria-label="Перша сторінка"
+                                >
+                                    1
+                                </a>
+
+                            </li>
+
+                            {% if page_obj.number > 4 %}
+
+                                <li
+                                    class="page-item disabled"
+                                    aria-hidden="true"
+                                >
+                                    <span class="page-link">…</span>
+                                </li>
+
+                            {% endif %}
+
+                        {% endif %}
+
+                        <!-- НАЗАД -->
+                        {% if page_obj.has_previous %}
+
+                            <li class="page-item">
+
+                                <a
+                                    class="page-link"
+                                    href="?{% if page_query %}{{ page_query }}&amp;{% endif %}page={{ page_obj.previous_page_number }}#catalog-top"
+                                >
+                                    ← Назад
+                                </a>
+
+                            </li>
+
+                        {% endif %}
+
+                        <!-- НОМЕРИ СТОРІНОК -->
+                        {% for num in page_obj.paginator.page_range %}
+
+                            {% if num == page_obj.number %}
+
+                                <li class="page-item active">
+
+                                    <span
+                                        class="page-link"
+                                        aria-current="page"
+                                    >
+                                        {{ num }}
+                                    </span>
+
+                                </li>
+
+                            {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+
+                                <li class="page-item">
+
+                                    <a
+                                        class="page-link"
+                                        href="?{% if page_query %}{{ page_query }}&amp;{% endif %}page={{ num }}#catalog-top"
+                                    >
+                                        {{ num }}
+                                    </a>
+
+                                </li>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                        <!-- ДАЛІ -->
+                        {% if page_obj.has_next %}
+
+                            <li class="page-item">
+
+                                <a
+                                    class="page-link"
+                                    href="?{% if page_query %}{{ page_query }}&amp;{% endif %}page={{ page_obj.next_page_number }}#catalog-top"
+                                >
+                                    Далі →
+                                </a>
+
+                            </li>
+
+                        {% endif %}
+
+                        <!-- ОСТАННЯ СТОРІНКА -->
+                        {% if page_obj.number < page_obj.paginator.num_pages|add:"-2" %}
+
+                            {% if page_obj.number < page_obj.paginator.num_pages|add:"-3" %}
+
+                                <li
+                                    class="page-item disabled"
+                                    aria-hidden="true"
+                                >
+                                    <span class="page-link">…</span>
+                                </li>
+
+                            {% endif %}
+
+                            <li class="page-item">
+
+                                <a
+                                    class="page-link"
+                                    href="?{% if page_query %}{{ page_query }}&amp;{% endif %}page={{ page_obj.paginator.num_pages }}#catalog-top"
+                                    aria-label="Остання сторінка"
+                                >
+                                    {{ page_obj.paginator.num_pages }}
+                                </a>
+
+                            </li>
+
+                        {% endif %}
+
+                    </ul>
+
+                    <p class="vx-catalog-pagination-info">
+                        Сторінка {{ page_obj.number }}
+                        із {{ page_obj.paginator.num_pages }}
+                        · Усього товарів: {{ total_products }}
+                    </p>
+
+                </nav>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <!-- ==========================================
+         06. НЕЩОДАВНО ПЕРЕГЛЯНУТІ
+    ========================================== -->
+
+    {% include "store/includes/recently_viewed.html" %}
+
+</section>
+
+<!-- JAVASCRIPT КАТАЛОГУ -->
+<script
+    src="{% static 'js/voltix-catalog.js' %}"
+    defer
+></script>
+
+{% endblock %}

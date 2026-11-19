@@ -1,0 +1,51 @@
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# Git / IDE
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Local database
+db.sqlite3
+db.sqlite3-*
+*.sqlite3
+*.sqlite3-*
+
+# Backups
+backup/
+backups/
+
+# Uploaded media
+media/
+
+# Generated static files
+staticfiles/
+
+# Test and cache files
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project data exports
+product_image_credits.json
+data/image_candidates.csv

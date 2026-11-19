@@ -1,0 +1,229 @@
+
+/* ==========================================
+   VOLTIX — WISHLIST
+========================================== */
+
+.vx-wishlist {
+    color: #15213a;
+}
+
+.vx-wishlist-back {
+    display: inline-block;
+    margin-bottom: 22px;
+    color: #567099;
+    font-size: 14px;
+    text-decoration: none;
+    font-weight: 650;
+}
+
+.vx-wishlist-back:hover {
+    color: #397bff;
+}
+
+.vx-wishlist-heading {
+    margin-bottom: 35px;
+}
+
+.vx-wishlist-eyebrow {
+    display: block;
+    color: #6486ba;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    margin-bottom: 10px;
+}
+
+.vx-wishlist-heading h1 {
+    font-size: clamp(30px, 4vw, 44px);
+    font-weight: 850;
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+}
+
+.vx-wishlist-heading h1 span {
+    font-size: .75em;
+}
+
+.vx-wishlist-heading p {
+    max-width: 650px;
+    color: #69758c;
+    line-height: 1.7;
+}
+
+.vx-wishlist-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.vx-wishlist-card {
+    min-width: 0;
+    background: #fff;
+    border: 1px solid #e5eaf3;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: transform .2s ease,
+                box-shadow .2s ease;
+}
+
+.vx-wishlist-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(19, 37, 72, .08);
+}
+
+.vx-wishlist-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 225px;
+    padding: 18px;
+    background: #f7f9fd;
+    text-decoration: none;
+}
+
+.vx-wishlist-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+}
+
+.vx-wishlist-no-photo {
+    font-size: 60px;
+}
+
+.vx-wishlist-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 19px;
+    gap: 12px;
+}
+
+.vx-wishlist-category {
+    color: #6486ba;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .7px;
+}
+
+.vx-wishlist-product-name {
+    color: #15213a;
+    font-weight: 750;
+    font-size: 15px;
+    line-height: 1.5;
+    text-decoration: none;
+}
+
+.vx-wishlist-product-name:hover {
+    color: #397bff;
+}
+
+.vx-wishlist-price {
+    font-size: 24px;
+    font-weight: 850;
+    color: #15213a;
+}
+
+.vx-wishlist-stock {
+    color: #16854e;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.vx-wishlist-stock--no {
+    color: #b04b3d;
+}
+
+.vx-wishlist-remove-form {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.vx-wishlist-remove {
+    width: 100%;
+    border: 1px solid #e5eaf3;
+    border-radius: 12px;
+    background: #fff;
+    color: #d43f5e;
+    padding: 12px;
+    font-weight: 750;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background .2s ease;
+}
+
+.vx-wishlist-remove:hover {
+    background: #fff0f3;
+}
+
+.vx-wishlist-empty {
+    text-align: center;
+    padding: 75px 24px;
+    background: #fff;
+    border: 1px dashed #cbd5e5;
+    border-radius: 22px;
+}
+
+.vx-wishlist-empty-icon {
+    font-size: 65px;
+    color: #397bff;
+}
+
+.vx-wishlist-empty h2 {
+    font-size: 23px;
+    font-weight: 800;
+    margin: 16px 0;
+}
+
+.vx-wishlist-empty p {
+    color: #69758c;
+    max-width: 450px;
+    margin: 0 auto 25px;
+}
+
+.vx-wishlist-empty a {
+    display: inline-block;
+    background: #397bff;
+    color: #fff;
+    padding: 13px 24px;
+    border-radius: 12px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.vx-wishlist-empty a:hover {
+    background: #225fe0;
+}
+
+@media (max-width: 1100px) {
+    .vx-wishlist-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767px) {
+    .vx-wishlist-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .vx-wishlist-image {
+        height: 175px;
+    }
+
+    .vx-wishlist-card-content {
+        padding: 14px;
+    }
+
+    .vx-wishlist-price {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 420px) {
+    .vx-wishlist-grid {
+        grid-template-columns: 1fr;
+    }
+}

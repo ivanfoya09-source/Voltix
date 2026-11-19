@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Вхід до акаунта — VOLTIX{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/voltix-auth-redesign.css' %}">
+
+<main class="vx-auth-page">
+    <div class="container vx-auth-container">
+        <aside class="vx-auth-showcase" aria-label="Про VOLTIX">
+            <a href="{% url 'store:home' %}" class="vx-auth-brand">⚡ VOLTIX <span>MARKET</span></a>
+            <span class="vx-auth-pill">ТЕХНОЛОГІЇ БЛИЖЧЕ</span>
+            <h1>Твій світ<br><em>технологій.</em></h1>
+            <p>Увійди до свого акаунта, щоб зручно керувати замовленнями та покупками.</p>
+            <div class="vx-auth-decoration" aria-hidden="true"><span>V</span><i></i><b></b></div>
+            <div class="vx-auth-showcase-footer">СМАРТФОНИ <span>✦</span> НОУТБУКИ <span>✦</span> АКСЕСУАРИ</div>
+        </aside>
+
+        <section class="vx-auth-panel" aria-labelledby="vx-login-title">
+            <div class="vx-auth-panel-top"><span class="vx-auth-panel-icon" aria-hidden="true">↗</span><span>ОСОБИСТИЙ КАБІНЕТ</span></div>
+            <h2 id="vx-login-title">З поверненням!</h2>
+            <p class="vx-auth-subtitle">Увійди, щоб продовжити покупки у VOLTIX.</p>
+
+            <form method="POST" class="vx-auth-form" data-vx-auth-form>
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ next|default:'' }}">
+
+                {% for error in form.non_field_errors %}
+                    <div class="vx-auth-alert" role="alert">{{ error }}</div>
+                {% endfor %}
+
+                {% for field in form %}
+                    <div class="vx-auth-field{% if field.errors %} has-error{% endif %}">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span aria-hidden="true"> *</span>{% endif %}</label>
+                        <div class="vx-auth-input-wrap">
+                            {{ field }}
+                            {% if field.field.widget.input_type == 'password' %}
+                                <button type="button" class="vx-auth-password-toggle" data-vx-password-toggle aria-label="Показати пароль" aria-pressed="false">Показати</button>
+                            {% endif %}
+                        </div>
+                        {% for error in field.errors %}<p class="vx-auth-error" role="alert">{{ error }}</p>{% endfor %}
+                    </div>
+                {% endfor %}
+
+                <button type="submit" class="vx-auth-submit">Увійти до VOLTIX <span aria-hidden="true">→</span></button>
+            </form>
+
+            <div class="vx-auth-bottom">Ще немає акаунта? <a href="{% url 'accounts:register' %}">Зареєструватися</a></div>
+            <a href="{% url 'store:home' %}" class="vx-auth-back">← Повернутися до магазину</a>
+        </section>
+    </div>
+</main>
+<script src="{% static 'js/voltix-auth.js' %}" defer></script>
+{% endblock %}

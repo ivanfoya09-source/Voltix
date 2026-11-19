@@ -1,0 +1,585 @@
+/* ==========================================================
+   VOLTIX | Сторінка товару + відгуки покупців
+   Стилі ізольовані префіксами vx-detail / vx-review(s)
+   ========================================================== */
+
+.vx-detail {
+    --vx-ink: #15213a;
+    --vx-muted: #69758c;
+    --vx-blue: #397bff;
+    --vx-lime: #c6fa5f;
+    --vx-border: #e5eaf3;
+    --vx-surface: #fff;
+    color: var(--vx-ink);
+}
+
+.vx-detail a { text-decoration: none; }
+.vx-detail-breadcrumbs .breadcrumb { font-size: 13px; gap: 3px; }
+.vx-detail-breadcrumbs .breadcrumb a { color: #66748a; text-decoration: none; }
+.vx-detail-breadcrumbs .breadcrumb .active {
+    color: #203149;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Назва та метадані товару */
+.vx-detail-back {
+    display: inline-flex;
+    color: #567099;
+    font-size: 14px;
+    font-weight: 650;
+    margin-bottom: 22px;
+}
+.vx-detail-back:hover { color: var(--vx-blue); }
+.vx-detail-topline { margin-bottom: 27px; }
+.vx-detail-eyebrow {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #6486ba;
+    display: block;
+    margin-bottom: 10px;
+}
+.vx-detail-topline h1 {
+    font-size: clamp(26px, 3.1vw, 41px);
+    line-height: 1.17;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin: 0 0 15px;
+    color: var(--vx-ink);
+}
+.vx-detail-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.vx-detail-hot,
+.vx-detail-status {
+    font-size: 12px;
+    font-weight: 750;
+    border-radius: 100px;
+    padding: 7px 12px;
+}
+.vx-detail-hot { background: #fff0e9; color: #c45517; }
+.vx-detail-status--yes { background: #eaf8ef; color: #16854e; }
+.vx-detail-status--no { background: #fff0ed; color: #b04b3d; }
+.vx-detail-review-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #405574;
+    font-weight: 700;
+    font-size: 13px;
+}
+.vx-detail-review-link:hover { color: var(--vx-blue); }
+
+/* Галерея товару */
+.vx-detail-gallery {
+    border-radius: 24px;
+    background: var(--vx-surface);
+    border: 1px solid var(--vx-border);
+    padding: 18px;
+    box-shadow: 0 14px 45px rgba(19, 37, 72, .045);
+}
+.vx-detail-stage {
+    height: clamp(290px, 40vw, 525px);
+    background: linear-gradient(145deg, #f6f8fd, #fff);
+    border-radius: 17px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+.vx-detail-main-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 27px;
+    mix-blend-mode: multiply;
+    transition: transform .24s ease;
+}
+.vx-detail-stage-badge {
+    position: absolute;
+    z-index: 2;
+    top: 16px;
+    left: 16px;
+    background: var(--vx-ink);
+    color: var(--vx-lime);
+    font-size: 12px;
+    font-weight: 800;
+    padding: 8px 13px;
+    border-radius: 9px;
+}
+.vx-detail-zoom {
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+    border: 1px solid var(--vx-border);
+    background: #fff;
+    border-radius: 12px;
+    width: 42px;
+    height: 42px;
+    font-size: 24px;
+    color: var(--vx-ink);
+    cursor: pointer;
+}
+.vx-detail-zoom:hover { border-color: var(--vx-blue); color: var(--vx-blue); }
+.vx-detail-no-photo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 80px;
+    color: #9aa4b3;
+}
+.vx-detail-no-photo span { font-size: 14px; }
+.vx-detail-thumbs {
+    display: flex;
+    gap: 11px;
+    overflow-x: auto;
+    padding: 16px 2px 2px;
+    scrollbar-width: thin;
+}
+.vx-detail-thumb {
+    width: 80px;
+    height: 80px;
+    flex: 0 0 80px;
+    border: 2px solid var(--vx-border);
+    border-radius: 13px;
+    background: #fff;
+    cursor: pointer;
+    padding: 5px;
+    transition: border-color .15s, box-shadow .15s;
+}
+.vx-detail-thumb img { width: 100%; height: 100%; object-fit: contain; }
+.vx-detail-thumb:hover,
+.vx-detail-thumb.is-active {
+    border-color: var(--vx-blue);
+    box-shadow: 0 0 0 3px rgba(57, 123, 255, .08);
+}
+
+/* Плашки під галереєю */
+.vx-detail-info-strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 15px;
+}
+.vx-detail-info-strip > div {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: #f4f7fc;
+    border-radius: 14px;
+    padding: 13px 12px;
+    min-width: 0;
+}
+.vx-detail-info-icon {
+    font-size: 18px;
+    background: #e5eeff;
+    color: #2964d8;
+    border-radius: 10px;
+    min-width: 35px;
+    height: 35px;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+}
+.vx-detail-info-strip strong,
+.vx-detail-info-strip small { display: block; line-height: 1.35; }
+.vx-detail-info-strip strong { font-size: 12px; }
+.vx-detail-info-strip small {
+    font-size: 11px;
+    color: var(--vx-muted);
+    margin-top: 3px;
+}
+
+/* Картка покупки */
+.vx-detail-buy-card {
+    background: #fff;
+    border: 1px solid var(--vx-border);
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 14px 45px rgba(19, 37, 72, .06);
+}
+.vx-detail-overline { font-size: 13px; color: var(--vx-muted); font-weight: 700; }
+.vx-detail-price {
+    font-weight: 850;
+    font-size: clamp(37px, 4vw, 52px);
+    letter-spacing: -2px;
+    color: var(--vx-ink);
+    margin: 4px 0 13px;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+.vx-detail-price span { font-size: .58em; letter-spacing: 0; }
+.vx-detail-stock-yes,
+.vx-detail-stock-no { font-weight: 750; font-size: 14px; }
+.vx-detail-stock-yes { color: #178453; }
+.vx-detail-stock-no { color: #bf5248; }
+.vx-detail-stock-count { color: var(--vx-muted); font-size: 13px; margin: 6px 0 0; }
+.vx-detail-purchase-form { margin-top: 28px; }
+.vx-detail-purchase-form label {
+    font-weight: 700;
+    color: #33435b;
+    font-size: 13px;
+    margin-bottom: 10px;
+    display: block;
+}
+.vx-detail-purchase-controls { display: flex; gap: 12px; align-items: stretch; }
+.vx-detail-qty {
+    display: flex;
+    border: 1px solid var(--vx-border);
+    border-radius: 12px;
+    overflow: hidden;
+    flex-shrink: 0;
+    height: 51px;
+}
+.vx-detail-qty button {
+    width: 33px;
+    border: 0;
+    background: #f6f8fc;
+    font-size: 23px;
+    color: var(--vx-ink);
+    cursor: pointer;
+}
+.vx-detail-qty button:hover { background: #eaf0ff; }
+.vx-detail-qty input {
+    width: 47px;
+    border: 0;
+    text-align: center;
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--vx-ink);
+    outline: none;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+.vx-detail-qty input::-webkit-outer-spin-button,
+.vx-detail-qty input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.vx-detail-cart-button {
+    border: 0;
+    background: var(--vx-blue);
+    color: #fff;
+    font-weight: 800;
+    border-radius: 12px;
+    min-height: 51px;
+    padding: 12px 15px;
+    flex: 1;
+    cursor: pointer;
+    transition: background .15s, transform .15s;
+}
+.vx-detail-cart-button:hover { background: #225fe0; transform: translateY(-1px); }
+.vx-detail-cart-button span { margin-right: 5px; }
+.vx-detail-unavailable {
+    margin-top: 25px;
+    width: 100%;
+    padding: 15px;
+    border: 0;
+    border-radius: 12px;
+    color: #7d8797;
+    background: #edf0f4;
+    font-weight: 750;
+}
+.vx-detail-purchase-divider { height: 1px; background: var(--vx-border); margin: 30px 0 23px; }
+.vx-detail-delivery-list { display: grid; gap: 20px; }
+.vx-detail-delivery-list > div { display: flex; gap: 13px; align-items: flex-start; }
+.vx-detail-delivery-list > div > span {
+    background: #f0f5fe;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    min-width: 44px;
+    height: 44px;
+    font-size: 20px;
+}
+.vx-detail-delivery-list p { margin: 0; }
+.vx-detail-delivery-list strong,
+.vx-detail-delivery-list small { display: block; }
+.vx-detail-delivery-list strong { font-size: 14px; color: var(--vx-ink); }
+.vx-detail-delivery-list small { font-size: 12px; color: var(--vx-muted); margin-top: 4px; }
+.vx-detail-help-note {
+    font-size: 12px;
+    color: var(--vx-muted);
+    text-align: center;
+    margin-top: 14px;
+}
+
+/* Опис товару */
+.vx-detail-description {
+    background: #fff;
+    border: 1px solid var(--vx-border);
+    border-radius: 24px;
+    padding: 30px 34px;
+    margin-top: 55px;
+    box-shadow: 0 14px 45px rgba(19, 37, 72, .035);
+}
+.vx-detail-section-heading { margin-bottom: 24px; }
+.vx-detail-section-heading span {
+    font-weight: 800;
+    font-size: 11px;
+    letter-spacing: 1.7px;
+    color: #7b91bb;
+}
+.vx-detail-section-heading h2 { font-weight: 800; font-size: 27px; margin: 7px 0 0; }
+.vx-detail-description-body {
+    color: #43516b;
+    font-size: 15px;
+    line-height: 1.85;
+    overflow-wrap: anywhere;
+}
+.vx-detail-description-body p:last-child { margin-bottom: 0; }
+
+/* Повноекранне фото */
+.vx-detail-lightbox[hidden] { display: none !important; }
+.vx-detail-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(10, 17, 34, .93);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 65px 24px 24px;
+}
+.vx-detail-lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.vx-detail-lightbox-close {
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    background: #fff;
+    color: #16223b;
+    border: 0;
+    border-radius: 12px;
+    width: 46px;
+    height: 46px;
+    font-size: 30px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+/* ==========================================================
+   ВІДГУКИ ПОКУПЦІВ
+   ========================================================== */
+.vx-reviews { margin-top: 48px; }
+.vx-reviews-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding: 28px;
+    margin-top: 24px;
+    margin-bottom: 26px;
+    background: #fff;
+    border: 1px solid var(--vx-border);
+    border-radius: 20px;
+    box-shadow: 0 14px 45px rgba(19, 37, 72, .035);
+}
+.vx-reviews-rating { display: flex; align-items: center; gap: 20px; }
+.vx-reviews-rating-number {
+    font-size: 52px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -2px;
+    color: var(--vx-ink);
+}
+.vx-reviews-stars { font-size: 24px; font-weight: 700; color: #f5a623; }
+.vx-reviews-stars span { font-size: 15px; color: var(--vx-muted); font-weight: 500; }
+.vx-reviews-count { margin: 7px 0 0; color: #7b8495; font-size: 13px; }
+.vx-reviews-action { text-align: right; }
+.vx-reviews-write-btn,
+.vx-reviews-login-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 12px 22px;
+    border-radius: 12px;
+    background: var(--vx-blue);
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform .2s ease, background .2s ease;
+}
+.vx-reviews-write-btn:hover,
+.vx-reviews-login-btn:hover {
+    background: #225fe0;
+    color: #fff;
+    transform: translateY(-2px);
+}
+.vx-reviews-hint {
+    color: var(--vx-muted);
+    font-size: 13px;
+    margin-bottom: 10px;
+    max-width: 250px;
+}
+.vx-reviews-list { display: grid; gap: 16px; }
+.vx-review-card {
+    background: #fff;
+    border: 1px solid var(--vx-border);
+    border-radius: 18px;
+    padding: 25px;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+.vx-review-card:hover {
+    border-color: #cbd8f3;
+    box-shadow: 0 8px 25px rgba(20, 40, 80, .05);
+}
+.vx-review-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
+}
+.vx-review-author { display: flex; align-items: center; gap: 12px; }
+.vx-review-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #edf3ff;
+    color: #155eef;
+    font-weight: 800;
+    font-size: 17px;
+}
+.vx-review-author strong { display: block; color: #1a2233; font-size: 15px; }
+.vx-review-verified { color: #14804a; font-size: 12px; margin-top: 3px; }
+.vx-review-date { color: #98a2b3; font-size: 12px; white-space: nowrap; }
+.vx-review-stars { margin-top: 20px; color: #f5a623; font-size: 22px; letter-spacing: 2px; }
+.vx-review-title { margin: 12px 0; color: #172033; font-size: 19px; font-weight: 750; }
+.vx-review-text { color: #475467; line-height: 1.75; font-size: 14px; }
+.vx-review-text p,
+.vx-review-detail p { margin-bottom: 0; }
+.vx-review-detail { margin-top: 17px; color: #475467; line-height: 1.6; font-size: 14px; }
+.vx-review-positive { color: #14804a; }
+.vx-review-negative { color: #d92d20; }
+.vx-reviews-empty {
+    padding: 55px 25px;
+    border: 1px dashed #ced7e4;
+    border-radius: 18px;
+    background: #fff;
+    text-align: center;
+}
+.vx-reviews-empty-icon {
+    color: #f5a623;
+    font-size: 48px;
+    line-height: 1;
+    margin-bottom: 15px;
+}
+.vx-reviews-empty h3 { font-size: 19px; font-weight: 750; color: #1a2233; }
+.vx-reviews-empty p {
+    color: var(--vx-muted);
+    font-size: 14px;
+    max-width: 400px;
+    margin: 10px auto 0;
+}
+
+/* Адаптивність */
+@media (max-width: 991px) {
+    .vx-detail-info-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .vx-detail-buy-card { padding: 24px; }
+}
+
+@media (max-width: 767px) {
+    .vx-reviews { margin-top: 32px; }
+    .vx-reviews-summary { padding: 20px; align-items: stretch; }
+    .vx-reviews-rating-number { font-size: 43px; }
+    .vx-reviews-action { width: 100%; text-align: left; }
+    .vx-reviews-hint { max-width: none; }
+    .vx-reviews-write-btn,
+    .vx-reviews-login-btn { width: 100%; }
+    .vx-review-card { padding: 20px; }
+    .vx-review-date { font-size: 11px; }
+}
+
+@media (max-width: 640px) {
+    .vx-detail-topline h1 { letter-spacing: -.5px; }
+    .vx-detail-gallery { padding: 10px; border-radius: 17px; }
+    .vx-detail-stage { height: 320px; border-radius: 12px; }
+    .vx-detail-main-image { padding: 12px; }
+    .vx-detail-thumb { height: 65px; width: 65px; flex-basis: 65px; }
+    .vx-detail-info-strip { grid-template-columns: 1fr; }
+    .vx-detail-info-strip > div { padding: 10px 14px; }
+    .vx-detail-buy-card { padding: 22px 17px; border-radius: 18px; }
+    .vx-detail-purchase-controls { flex-wrap: wrap; }
+    .vx-detail-cart-button { flex-basis: 100%; }
+    .vx-detail-description { padding: 22px 18px; margin-top: 35px; border-radius: 18px; }
+    .vx-detail-section-heading h2 { font-size: 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .vx-detail-cart-button,
+    .vx-detail-main-image,
+    .vx-reviews-write-btn,
+    .vx-reviews-login-btn,
+    .vx-review-card { transition: none; }
+}
+
+
+/* VOLTIX — Пагінація відгуків */
+
+.vx-reviews-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 30px;
+}
+
+.vx-page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    min-height: 42px;
+    padding: 10px 15px;
+    background: #ffffff;
+    border: 1px solid #e5eaf3;
+    border-radius: 12px;
+    color: #15213a;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    transition: background .2s ease,
+                border-color .2s ease,
+                transform .2s ease;
+}
+
+a.vx-page-btn:hover {
+    background: #edf3ff;
+    border-color: #397bff;
+    color: #397bff;
+    transform: translateY(-2px);
+}
+
+.vx-page-btn.is-active {
+    background: #397bff;
+    border-color: #397bff;
+    color: #ffffff;
+}
+
+@media (max-width: 640px) {
+    .vx-reviews-pagination {
+        gap: 6px;
+    }
+
+    .vx-page-btn {
+        min-width: 38px;
+        min-height: 38px;
+        padding: 8px 11px;
+    }
+}

@@ -1,0 +1,22 @@
+
+VOLTIX — Оновлення замовлення
+
+Вітаємо, {{ order.full_name }}!
+
+Статус вашого замовлення №{{ order.id }} змінено.
+
+Новий статус: {{ order.get_status_display }}
+
+{% if order.estimated_delivery_date %}
+{% if order.status == "shipped" %}
+Орієнтовна дата доставки:
+{{ order.estimated_delivery_date|date:"d.m.Y" }}
+{% endif %}
+{% endif %}
+
+Сума товарів: {{ order.total }} ₴
+
+Це навчальний проєкт.
+Реальна оплата та доставка не виконуються.
+
+Дякуємо, що обрали VOLTIX!

@@ -1,0 +1,60 @@
+/* Шапка та меню */
+.site-header {
+    position: relative;
+    z-index: 20;
+    padding: 15px 0;
+    background: linear-gradient(105deg, #101d3b 0%, #182d60 56%, #152752 100%);
+    box-shadow: 0 8px 24px rgba(9, 20, 46, .15);
+}
+.site-header::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent);
+    pointer-events: none;
+}
+.header-content { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.logo {
+    flex: 0 0 auto;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 900;
+    font-size: clamp(1.45rem, 2.1vw, 1.85rem);
+    letter-spacing: -.07em;
+    white-space: nowrap;
+}
+.logo:hover { color: #ffe19b; }
+.main-nav { display: flex; align-items: center; gap: 8px; }
+.main-nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 8px 15px;
+    border-radius: 11px;
+    color: #dfe8ff;
+    text-decoration: none;
+    font-size: .95rem;
+    font-weight: 650;
+}
+.main-nav a:hover, .main-nav a:focus-visible { color: #fff; background: rgba(255,255,255,.105); }
+.header-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px !important; color: #fff; }
+.header-actions a:not(.btn) { color: #eef3ff !important; font-weight: 650; }
+.header-actions a:not(.btn):hover { color: #ffe19b !important; }
+.header-actions .btn { padding: .47rem .8rem; white-space: nowrap; }
+.header-actions .btn-outline-light { border-color: rgba(255,255,255,.48); }
+.header-actions .btn-outline-light:hover { color: #17233e; }
+.header-actions span { font-size: .92rem; opacity: .92; }
+@media (max-width: 991.98px) {
+    .header-content { flex-wrap: wrap; row-gap: 12px; }
+    .main-nav { order: 3; width: 100%; justify-content: center; border-top: 1px solid rgba(255,255,255,.14); padding-top: 8px; }
+    .header-actions { margin-left: auto; }
+}
+@media (max-width: 575.98px) {
+    .site-header { padding: 12px 0; }
+    .header-content { gap: 10px; }
+    .header-actions { width: 100%; justify-content: space-between; }
+    .header-actions .btn { font-size: .82rem; }
+    .main-nav { gap: 2px; }
+    .main-nav a { padding: 8px 13px; }
+}

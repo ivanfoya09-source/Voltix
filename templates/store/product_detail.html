@@ -1,0 +1,897 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ product.name }} — VOLTIX{% endblock %}
+
+{% block breadcrumbs %}
+<nav class="container vx-detail-breadcrumbs mt-4" aria-label="Навігаційний шлях">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item">
+            <a href="{% url 'store:home' %}">Головна</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'store:product_list' %}">Каталог</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'store:product_list' %}?category={{ product.category.slug|urlencode }}">
+                {{ product.category.name }}
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            {{ product.name }}
+        </li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/voltix-detail.css' %}?v=2">
+
+<!-- ==========================================
+     WISHLIST — СТИЛІ КНОПКИ НА СТОРІНЦІ ТОВАРУ
+========================================== -->
+<style>
+    .vx-detail-wishlist-form {
+        margin-top: 12px;
+        width: 100%;
+    }
+
+    .vx-detail-wishlist-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        min-height: 48px;
+        padding: 12px 18px;
+        border: 1px solid #e2e8f2;
+        border-radius: 12px;
+        background: #ffffff;
+        color: #34445e;
+        font-size: 14px;
+        font-weight: 750;
+        text-decoration: none;
+        cursor: pointer;
+        transition:
+            background .2s ease,
+            border-color .2s ease,
+            color .2s ease,
+            transform .2s ease;
+    }
+
+    .vx-detail-wishlist-button:hover {
+        background: #fff1f5;
+        border-color: #f0adc0;
+        color: #dc4269;
+        transform: translateY(-1px);
+    }
+
+    .vx-detail-wishlist-button.is-active {
+        background: #fff1f5;
+        border-color: #f0adc0;
+        color: #dc4269;
+    }
+
+    .vx-detail-wishlist-button:disabled {
+        opacity: .65;
+        cursor: wait;
+        transform: none;
+    }
+
+    .vx-detail-wishlist-icon {
+        font-size: 24px;
+        line-height: 1;
+    }
+
+    .vx-detail-wishlist-button.is-active
+    .vx-detail-wishlist-icon {
+        color: #e64670;
+    }
+
+    .vx-detail-review-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        color: #465a78;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .vx-detail-review-link:hover {
+        color: #397bff;
+    }
+</style>
+
+<section
+    class="vx-detail container my-4 my-lg-5"
+    data-vx-product-detail
+>
+
+    <a
+        href="{% url 'store:product_list' %}"
+        class="vx-detail-back"
+    >
+        ← До каталогу
+    </a>
+
+    <!-- ==========================================
+         01. НАЗВА ТОВАРУ
+    ========================================== -->
+
+    <div class="vx-detail-topline">
+
+        <span class="vx-detail-eyebrow">
+            ⚡ VOLTIX / {{ product.category.name }}
+        </span>
+
+        <h1>{{ product.name }}</h1>
+
+        <div class="vx-detail-meta">
+
+            {% if product.is_featured %}
+                <span class="vx-detail-hot">
+                    🔥 Хіт продажів
+                </span>
+            {% endif %}
+
+            {% if product.available and product.stock > 0 %}
+                <span class="vx-detail-status vx-detail-status--yes">
+                    ● Є в наявності
+                </span>
+            {% else %}
+                <span class="vx-detail-status vx-detail-status--no">
+                    ● Немає в наявності
+                </span>
+            {% endif %}
+
+            {% if review_count %}
+                <a
+                    href="#reviews"
+                    class="vx-detail-review-link"
+                >
+                    <span class="text-warning">★</span>
+
+                    {{ average_rating|floatformat:1 }}
+
+                    <span class="text-muted">
+                        ({{ review_count }} відгуків)
+                    </span>
+                </a>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <!-- ==========================================
+         02. ГАЛЕРЕЯ ТА КУПІВЛЯ
+    ========================================== -->
+
+    <div class="row g-4 g-xl-5 align-items-start">
+
+        <!-- ЛІВА КОЛОНКА: ФОТО -->
+        <div class="col-lg-7">
+
+            <div class="vx-detail-gallery" data-vx-gallery>
+
+                <div class="vx-detail-stage">
+
+                    {% if product.is_featured %}
+                        <span class="vx-detail-stage-badge">
+                            Популярний вибір
+                        </span>
+                    {% endif %}
+
+                    {% with first_photo=product.images.all|first %}
+
+                        {% if first_photo %}
+
+                            <img
+                                class="vx-detail-main-image"
+                                data-vx-main-image
+                                src="{{ first_photo.image.url }}"
+                                alt="{{ first_photo.alt_text|default:product.name }}"
+                            >
+
+                            <button
+                                class="vx-detail-zoom"
+                                type="button"
+                                data-vx-zoom
+                                aria-label="Відкрити фото на весь екран"
+                                title="Збільшити фото"
+                            >
+                                ⤢
+                            </button>
+
+                        {% else %}
+
+                            <div class="vx-detail-no-photo">
+                                📦
+                                <span>Фото скоро з’явиться</span>
+                            </div>
+
+                        {% endif %}
+
+                    {% endwith %}
+
+                </div>
+
+                {% if product.images.all %}
+
+                    <div
+                        class="vx-detail-thumbs"
+                        role="group"
+                        aria-label="Фотографії товару"
+                    >
+
+                        {% for photo in product.images.all %}
+
+                            <button
+                                type="button"
+                                class="vx-detail-thumb {% if forloop.first %}is-active{% endif %}"
+                                data-vx-thumb
+                                data-image-url="{{ photo.image.url }}"
+                                data-image-alt="{{ photo.alt_text|default:product.name }}"
+                                aria-label="Показати фото {{ forloop.counter }}"
+                                aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+                            >
+                                <img
+                                    src="{{ photo.image.url }}"
+                                    alt=""
+                                    loading="lazy"
+                                >
+                            </button>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            <!-- ПЕРЕВАГИ МАГАЗИНУ -->
+            <div class="vx-detail-info-strip">
+
+                <div>
+                    <span class="vx-detail-info-icon">✓</span>
+                    <div>
+                        <strong>Зручний вибір</strong>
+                        <small>Фотографії та опис</small>
+                    </div>
+                </div>
+
+                <div>
+                    <span class="vx-detail-info-icon">↗</span>
+                    <div>
+                        <strong>Доставка по Україні</strong>
+                        <small>Умови під час оформлення</small>
+                    </div>
+                </div>
+
+                <div>
+                    <span class="vx-detail-info-icon">🔒</span>
+                    <div>
+                        <strong>Захищений акаунт</strong>
+                        <small>Особистий кабінет</small>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ======================================
+             ПРАВА КОЛОНКА: ПОКУПКА
+        ======================================= -->
+        <div class="col-lg-5">
+
+            <div class="vx-detail-buy-card">
+
+                <div class="vx-detail-buy-header">
+
+                    <span class="vx-detail-overline">
+                        Ціна товару
+                    </span>
+
+                    <div class="vx-detail-price">
+                        {{ product.price }}
+                        <span>₴</span>
+                    </div>
+
+                    {% if product.available and product.stock > 0 %}
+
+                        <span class="vx-detail-stock-yes">
+                            ✓ У наявності
+                        </span>
+
+                        <p class="vx-detail-stock-count">
+                            На складі: {{ product.stock }} шт.
+                        </p>
+
+                    {% else %}
+
+                        <span class="vx-detail-stock-no">
+                            ✕ Немає в наявності
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+                <!-- ==================================
+                     КОШИК
+                =================================== -->
+
+                {% if product.available and product.stock > 0 %}
+
+                    <form
+                        method="POST"
+                        action="{% url 'cart:cart_add' product.id %}"
+                        data-ajax-add-to-cart
+                        data-ajax-url="{% url 'cart:ajax_cart_add' product.id %}"
+                        class="vx-detail-purchase-form"
+                    >
+                        {% csrf_token %}
+
+                        <label for="vx-detail-quantity">
+                            Кількість
+                        </label>
+
+                        <div class="vx-detail-purchase-controls">
+
+                            <div class="vx-detail-qty" data-vx-qty>
+
+                                <button
+                                    type="button"
+                                    data-vx-qty-minus
+                                    aria-label="Зменшити кількість"
+                                >
+                                    −
+                                </button>
+
+                                <input
+                                    type="number"
+                                    id="vx-detail-quantity"
+                                    name="quantity"
+                                    value="1"
+                                    min="1"
+                                    max="{{ product.stock }}"
+                                    required
+                                    inputmode="numeric"
+                                    aria-label="Кількість товару"
+                                >
+
+                                <button
+                                    type="button"
+                                    data-vx-qty-plus
+                                    aria-label="Збільшити кількість"
+                                >
+                                    +
+                                </button>
+
+                            </div>
+
+                            <button
+                                type="submit"
+                                class="vx-detail-cart-button"
+                            >
+                                <span>🛒</span>
+                                Додати до кошика
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                {% else %}
+
+                    <button
+                        class="vx-detail-unavailable"
+                        type="button"
+                        disabled
+                    >
+                        Товар тимчасово недоступний
+                    </button>
+
+                {% endif %}
+
+                <!-- ==================================
+                     ❤️ WISHLIST
+                     ОКРЕМА ФОРМА, НЕ ВСЕРЕДИНІ КОШИКА
+                =================================== -->
+
+                {% if user.is_authenticated %}
+
+                    <form
+                        method="post"
+                        action="{% url 'wishlist:toggle' product.id %}"
+                        class="vx-detail-wishlist-form"
+                        data-wishlist-form
+                    >
+                        {% csrf_token %}
+
+                        <input
+                            type="hidden"
+                            name="next"
+                            value="{{ request.get_full_path }}"
+                        >
+
+                        <button
+                            type="submit"
+                            class="vx-detail-wishlist-button {% if product.id in wishlist_product_ids %}is-active{% endif %}"
+                            data-wishlist-heart
+                            data-product-id="{{ product.id }}"
+                            aria-pressed="{% if product.id in wishlist_product_ids %}true{% else %}false{% endif %}"
+                            aria-label="Змінити обране: {{ product.name }}"
+                            title="{% if product.id in wishlist_product_ids %}Видалити з обраного{% else %}Додати до обраного{% endif %}"
+                        >
+                            <span class="vx-detail-wishlist-icon" aria-hidden="true">
+                                {% if product.id in wishlist_product_ids %}♥{% else %}♡{% endif %}
+                            </span>
+
+                            <span class="vx-detail-wishlist-text">
+                                {% if product.id in wishlist_product_ids %}
+                                    В обраному
+                                {% else %}
+                                    Додати до обраного
+                                {% endif %}
+                            </span>
+                        </button>
+
+                    </form>
+
+                {% else %}
+
+                    <div class="vx-detail-wishlist-form">
+                        <a
+                            href="{% url 'accounts:login' %}?next={{ request.get_full_path|urlencode }}"
+                            class="vx-detail-wishlist-button"
+                            title="Увійдіть, щоб додати товар до обраного"
+                        >
+                            <span class="vx-detail-wishlist-icon" aria-hidden="true">
+                                ♡
+                            </span>
+
+                            <span>
+                                Додати до обраного
+                            </span>
+                        </a>
+                    </div>
+
+                {% endif %}
+
+                <div class="vx-detail-purchase-divider"></div>
+
+                <!-- УМОВИ ПОКУПКИ -->
+                <div class="vx-detail-delivery-list">
+
+                    <div>
+                        <span>🚚</span>
+                        <p>
+                            <strong>Доставка по Україні</strong>
+                            <small>
+                                Доступні варіанти — під час оформлення
+                            </small>
+                        </p>
+                    </div>
+
+                    <div>
+                        <span>💳</span>
+                        <p>
+                            <strong>Зручне оформлення</strong>
+                            <small>
+                                Підтвердження замовлення на сайті
+                            </small>
+                        </p>
+                    </div>
+
+                    <div>
+                        <span>🛡️</span>
+                        <p>
+                            <strong>Контроль замовлень</strong>
+                            <small>
+                                В особистому кабінеті VOLTIX
+                            </small>
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="vx-detail-help-note">
+                Є запитання про товар?
+                Перевір характеристики та опис нижче.
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ==========================================
+         03. ОПИС ТОВАРУ
+    ========================================== -->
+
+    <section
+        class="vx-detail-description"
+        aria-labelledby="vx-detail-description-heading"
+    >
+
+        <div class="vx-detail-section-heading">
+            <span>01 / ІНФОРМАЦІЯ</span>
+
+            <h2 id="vx-detail-description-heading">
+                Опис товару
+            </h2>
+        </div>
+
+        <div class="vx-detail-description-body">
+
+            {% if product.description %}
+                {{ product.description|linebreaks }}
+            {% else %}
+                <p>Опис цього товару поки не додано.</p>
+            {% endif %}
+
+        </div>
+
+    </section>
+
+    <!-- ==========================================
+         04. ВІДГУКИ ПОКУПЦІВ
+    ========================================== -->
+
+    <section
+        class="vx-reviews"
+        id="reviews"
+        aria-labelledby="vx-reviews-heading"
+    >
+
+        <div class="vx-detail-section-heading">
+
+            <span>02 / ВІДГУКИ</span>
+
+            <h2 id="vx-reviews-heading">
+                Відгуки покупців
+            </h2>
+
+        </div>
+
+        <!-- ЗАГАЛЬНИЙ РЕЙТИНГ -->
+        <div class="vx-reviews-summary">
+
+            <div class="vx-reviews-rating">
+
+                <div class="vx-reviews-rating-number">
+                    {% if average_rating %}
+                        {{ average_rating|floatformat:1 }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </div>
+
+                <div>
+
+                    <div class="vx-reviews-stars">
+
+                        {% if average_rating %}
+                            ★
+                            <span>
+                                {{ average_rating|floatformat:1 }} / 5
+                            </span>
+                        {% else %}
+                            ☆
+                            <span>Ще немає оцінок</span>
+                        {% endif %}
+
+                    </div>
+
+                    <p class="vx-reviews-count">
+                        {{ review_count|default:0 }}
+                        відгуків покупців
+                    </p>
+
+                </div>
+            </div>
+
+            <!-- КНОПКА ВІДГУКУ -->
+            <div class="vx-reviews-action">
+
+                {% if can_review %}
+
+                    <a
+                        href="{% url 'reviews:write' product.slug %}"
+                        class="vx-reviews-write-btn"
+                    >
+                        ✎ Написати або змінити відгук
+                    </a>
+
+                {% elif not user.is_authenticated %}
+
+                    <p class="vx-reviews-hint">
+                        Увійдіть в акаунт, щоб перевірити
+                        можливість залишити відгук.
+                    </p>
+
+                    <a
+                        href="{% url 'accounts:login' %}?next={{ request.path|urlencode }}"
+                        class="vx-reviews-login-btn"
+                    >
+                        Увійти
+                    </a>
+
+                {% else %}
+
+                    <p class="vx-reviews-hint">
+                        Залишити відгук можна після
+                        отримання товару.
+                    </p>
+
+                {% endif %}
+
+            </div>
+        </div>
+
+        <!-- ======================================
+             СПИСОК ВІДГУКІВ
+        ======================================= -->
+
+        <div class="vx-reviews-list">
+
+            {% for review in approved_reviews %}
+
+                <article class="vx-review-card">
+
+                    <div class="vx-review-header">
+
+                        <div class="vx-review-author">
+
+                            <div class="vx-review-avatar">
+                                {{ review.user.username|first|upper }}
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    {{ review.user.username }}
+                                </strong>
+
+                                <div class="vx-review-verified">
+                                    ✓ Підтверджена покупка
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <time
+                            class="vx-review-date"
+                            datetime="{{ review.created_at|date:'Y-m-d' }}"
+                        >
+                            {{ review.created_at|date:"d.m.Y" }}
+                        </time>
+
+                    </div>
+
+                    <!-- ЗІРКИ -->
+                    <div
+                        class="vx-review-stars"
+                        aria-label="Оцінка {{ review.rating }} з 5"
+                    >
+
+                        {% if review.rating == 5 %}
+                            ★★★★★
+                        {% elif review.rating == 4 %}
+                            ★★★★☆
+                        {% elif review.rating == 3 %}
+                            ★★★☆☆
+                        {% elif review.rating == 2 %}
+                            ★★☆☆☆
+                        {% else %}
+                            ★☆☆☆☆
+                        {% endif %}
+
+                    </div>
+
+                    <h3 class="vx-review-title">
+                        {{ review.title }}
+                    </h3>
+
+                    <div class="vx-review-text">
+                        {{ review.comment|linebreaks }}
+                    </div>
+
+                    {% if review.advantages %}
+
+                        <div class="vx-review-detail">
+
+                            <strong class="vx-review-positive">
+                                + Переваги
+                            </strong>
+
+                            <div>
+                                {{ review.advantages|linebreaks }}
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+                    {% if review.disadvantages %}
+
+                        <div class="vx-review-detail">
+
+                            <strong class="vx-review-negative">
+                                − Недоліки
+                            </strong>
+
+                            <div>
+                                {{ review.disadvantages|linebreaks }}
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+                </article>
+
+            {% empty %}
+
+                <div class="vx-reviews-empty">
+
+                    <div class="vx-reviews-empty-icon">
+                        ☆
+                    </div>
+
+                    <h3>Відгуків поки немає</h3>
+
+                    <p>
+                        Після отримання товару покупці
+                        зможуть поділитися своїми враженнями.
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+        <!-- ======================================
+             ПАГІНАЦІЯ ВІДГУКІВ
+        ======================================= -->
+
+        {% if reviews_page.paginator.num_pages > 1 %}
+
+            <nav
+                class="vx-reviews-pagination"
+                aria-label="Сторінки відгуків"
+            >
+
+                {% if reviews_page.has_previous %}
+                    <a
+                        href="?reviews_page={{ reviews_page.previous_page_number }}#reviews"
+                        class="vx-page-btn"
+                    >
+                        ← Назад
+                    </a>
+                {% endif %}
+
+                {% for page_number in reviews_page.paginator.page_range %}
+
+                    {% if page_number == reviews_page.number %}
+
+                        <span
+                            class="vx-page-btn is-active"
+                            aria-current="page"
+                        >
+                            {{ page_number }}
+                        </span>
+
+                    {% else %}
+
+                        <a
+                            href="?reviews_page={{ page_number }}#reviews"
+                            class="vx-page-btn"
+                            aria-label="Сторінка {{ page_number }}"
+                        >
+                            {{ page_number }}
+                        </a>
+
+                    {% endif %}
+
+                {% endfor %}
+
+                {% if reviews_page.has_next %}
+                    <a
+                        href="?reviews_page={{ reviews_page.next_page_number }}#reviews"
+                        class="vx-page-btn"
+                    >
+                        Далі →
+                    </a>
+                {% endif %}
+
+            </nav>
+
+        {% endif %}
+
+    </section>
+
+    <!-- ==========================================
+         05. НЕЩОДАВНО ПЕРЕГЛЯНУТІ
+    ========================================== -->
+
+    {% include "store/includes/recently_viewed.html" %}
+
+</section>
+
+<!-- ==========================================
+     06. ПЕРЕГЛЯД ФОТО НА ВЕСЬ ЕКРАН
+========================================== -->
+
+<div
+    class="vx-detail-lightbox"
+    data-vx-lightbox
+    hidden
+    aria-hidden="true"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Перегляд фотографії"
+>
+
+    <button
+        type="button"
+        class="vx-detail-lightbox-close"
+        data-vx-close
+        aria-label="Закрити перегляд"
+    >
+        ×
+    </button>
+
+    <img data-vx-lightbox-image alt="">
+
+</div>
+
+<script
+    src="{% static 'js/voltix-detail.js' %}"
+    defer
+></script>
+
+<!-- ==========================================
+     ОНОВЛЕННЯ ПІДПИСУ КНОПКИ ПІСЛЯ AJAX
+========================================== -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const wishlistForm = document.querySelector(
+        ".vx-detail-wishlist-form[data-wishlist-form]"
+    );
+
+    if (!wishlistForm) return;
+
+    const button = wishlistForm.querySelector(
+        "[data-wishlist-heart]"
+    );
+
+    if (!button) return;
+
+    const label = button.querySelector(
+        ".vx-detail-wishlist-text"
+    );
+
+    if (!label) return;
+
+    const observer = new MutationObserver(function () {
+        const isActive = button.classList.contains("is-active");
+
+        label.textContent = isActive
+            ? "В обраному"
+            : "Додати до обраного";
+    });
+
+    observer.observe(button, {
+        attributes: true,
+        attributeFilter: ["class"]
+    });
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,20 @@
+/* Палітра VOLTIX */
+:root {
+    --dark-blue: #101d3b;
+    --blue: #4668f6;
+    --blue-hover: #3152da;
+    --orange: #f97316;
+    --light: #f4f7fc;
+    --surface: #ffffff;
+    --surface-soft: #eef3fd;
+    --ink: #17233e;
+    --muted: #64748b;
+    --line: #e3eaf4;
+    --success: #12805b;
+    --shadow-sm: 0 4px 18px rgba(15, 30, 65, .045);
+    --shadow-md: 0 18px 44px rgba(15, 30, 65, .105);
+    --radius-sm: 12px;
+    --radius-md: 18px;
+    --radius-lg: 26px;
+    --ease: cubic-bezier(.2, .8, .2, 1);
+}

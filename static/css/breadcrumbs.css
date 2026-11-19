@@ -1,0 +1,7 @@
+/* Навігаційний ланцюжок */
+.breadcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: 1px; margin-bottom: 4px; padding: 10px 0; background: transparent; font-size: .88rem; }
+.breadcrumb-item { color: var(--muted); }
+.breadcrumb-item + .breadcrumb-item::before { color: #a4b1c5; }
+.breadcrumb-item a { color: #5774d8; text-decoration: none; font-weight: 550; }
+.breadcrumb-item a:hover { color: var(--blue-hover); text-decoration: underline; }
+.breadcrumb-item.active { color: #52617a; font-weight: 650; }

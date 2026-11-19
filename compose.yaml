@@ -1,0 +1,62 @@
+
+# ==========================================
+# VOLTIX — LOCAL DOCKER ENVIRONMENT
+# ==========================================
+# Локальна розробка та перевірка Docker.
+# НЕ використовувати для публічного production.
+
+services:
+
+  redis:
+    image: redis:7-alpine
+
+    restart: unless-stopped
+
+    volumes:
+      - voltix_redis:/data
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    env_file:
+      - .env
+
+    environment:
+      DEBUG: "True"
+
+      ALLOWED_HOSTS: "127.0.0.1,localhost"
+
+      REDIS_URL: "redis://redis:6379/0"
+
+      SECURE_SSL_REDIRECT: "False"
+      SECURE_HSTS_SECONDS: "0"
+      TRUST_PROXY_SSL_HEADER: "False"
+
+      # DATABASE_URL для локальної SQLite
+      # не задаємо.
+
+    depends_on:
+      redis:
+        condition: service_healthy
+
+    ports:
+      - "127.0.0.1:8000:8000"
+
+    # Локальна SQLite та фотографії
+    # залишаються на твоєму комп'ютері.
+    volumes:
+      - .:/app
+
+    restart: unless-stopped
+
+
+volumes:
+  voltix_redis:

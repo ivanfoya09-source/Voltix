@@ -1,0 +1,57 @@
+/* Базові елементи і кнопки */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--light);
+    color: var(--ink);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+body { display: flex; flex-direction: column; }
+main { flex: 1; min-width: 0; }
+a { transition: color .2s ease; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+    outline: 3px solid rgba(70, 104, 246, .33);
+    outline-offset: 3px;
+}
+::selection { color: #fff; background: var(--blue); }
+.btn {
+    border-radius: 11px;
+    font-weight: 650;
+    transition: transform .22s var(--ease), box-shadow .22s var(--ease), background-color .22s ease, border-color .22s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-primary {
+    --bs-btn-bg: var(--blue);
+    --bs-btn-border-color: var(--blue);
+    --bs-btn-hover-bg: var(--blue-hover);
+    --bs-btn-hover-border-color: var(--blue-hover);
+    --bs-btn-active-bg: var(--blue-hover);
+    --bs-btn-active-border-color: var(--blue-hover);
+    box-shadow: 0 6px 16px rgba(70, 104, 246, .17);
+}
+.btn-primary:hover { box-shadow: 0 10px 22px rgba(70, 104, 246, .23); }
+.btn-warning {
+    --bs-btn-bg: #ffd078;
+    --bs-btn-border-color: #ffd078;
+    --bs-btn-hover-bg: #ffc355;
+    --bs-btn-hover-border-color: #ffc355;
+    --bs-btn-color: #17233e;
+    --bs-btn-hover-color: #17233e;
+}
+.form-control, .form-select {
+    border-color: var(--line);
+    border-radius: var(--radius-sm);
+    color: var(--ink);
+}
+.form-control:focus, .form-select:focus {
+    border-color: #97a9ff;
+    box-shadow: 0 0 0 .2rem rgba(70, 104, 246, .12);
+}
+.alert { border-radius: var(--radius-sm); border: 1px solid transparent; box-shadow: var(--shadow-sm); }
+@media (max-width: 575.98px) {
+    .container { --bs-gutter-x: 1.75rem; }
+}

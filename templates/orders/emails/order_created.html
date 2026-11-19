@@ -1,0 +1,193 @@
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Замовлення №{{ order.id }} — VOLTIX</title>
+</head>
+
+<body style="margin:0; padding:30px 12px; background:#f1f5f9;
+             font-family:Arial,sans-serif; color:#1e293b;">
+
+    <table role="presentation" cellpadding="0" cellspacing="0"
+           style="width:100%; max-width:620px; margin:auto;
+                  background:#ffffff; border-radius:16px;
+                  overflow:hidden;">
+
+        <!-- Шапка -->
+        <tr>
+            <td style="background:#172554; padding:30px;
+                       text-align:center;">
+                <h1 style="color:#ffffff; margin:0;
+                           font-size:30px;">
+                    ⚡ VOLTIX
+                </h1>
+
+                <p style="color:#cbd5e1; margin:10px 0 0;">
+                    Технології ближче, ніж здається.
+                </p>
+            </td>
+        </tr>
+
+        <!-- Підтвердження -->
+        <tr>
+            <td style="padding:32px;">
+
+                <h2 style="color:#172554; font-size:25px;
+                           margin-top:0;">
+                    Замовлення оформлено!
+                </h2>
+
+                <p>
+                    Вітаємо, {{ order.full_name }}!
+                </p>
+
+                <p style="line-height:1.7;">
+                    Ваше замовлення успішно створено
+                    в інтернет-магазині VOLTIX.
+                </p>
+
+                <div style="padding:18px; background:#eff6ff;
+                            border-radius:10px; margin:24px 0;">
+
+                    <strong style="color:#1d4ed8;">
+                        Замовлення №{{ order.id }}
+                    </strong>
+
+                    <p style="margin:8px 0 0; color:#475569;">
+                        Дата:
+                        {{ order.created_at|date:"d.m.Y H:i" }}
+                    </p>
+
+                    <p style="margin:8px 0 0; color:#475569;">
+                        Статус: {{ order.get_status_display }}
+                    </p>
+                </div>
+
+                <!-- Товари -->
+                <h3 style="color:#172554;">
+                    Ваші товари
+                </h3>
+
+                <table role="presentation"
+                       cellpadding="0"
+                       cellspacing="0"
+                       style="width:100%; border-collapse:collapse;">
+
+                    {% for item in order.items.all %}
+                    <tr>
+                        <td style="padding:14px 5px;
+                                   border-bottom:1px solid #e2e8f0;">
+
+                            <strong>{{ item.product_name }}</strong>
+
+                            <p style="color:#64748b;
+                                      font-size:13px; margin:6px 0 0;">
+                                {{ item.quantity }} шт.
+                                × {{ item.price }} ₴
+                            </p>
+
+                        </td>
+
+                        <td style="padding:14px 5px;
+                                   border-bottom:1px solid #e2e8f0;
+                                   text-align:right; white-space:nowrap;">
+
+                            <strong>
+                                {{ item.get_total_price }} ₴
+                            </strong>
+
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                </table>
+
+                <!-- Сума -->
+                <table role="presentation"
+                       style="width:100%; margin-top:22px;">
+
+                    <tr>
+                        <td style="padding:8px 0;">
+                            Вартість товарів
+                        </td>
+                        <td style="text-align:right;">
+                            {{ order.subtotal }} ₴
+                        </td>
+                    </tr>
+
+                    {% if order.discount_amount > 0 %}
+                    <tr>
+                        <td style="padding:8px 0; color:#15803d;">
+                            Знижка {{ order.discount_percent }}%
+                        </td>
+                        <td style="text-align:right; color:#15803d;">
+                            −{{ order.discount_amount }} ₴
+                        </td>
+                    </tr>
+                    {% endif %}
+
+                    <tr>
+                        <td style="padding:16px 0; font-weight:bold;">
+                            Разом за товари
+                        </td>
+
+                        <td style="text-align:right;
+                                   color:#f97316;
+                                   font-size:23px;
+                                   font-weight:bold;">
+                            {{ order.total }} ₴
+                        </td>
+                    </tr>
+
+                </table>
+
+                <!-- Доставка -->
+                <h3 style="color:#172554; margin-top:30px;">
+                    Адреса доставки
+                </h3>
+
+                <p style="line-height:1.8;">
+                    {{ order.full_name }}<br>
+                    {{ order.phone }}<br>
+                    {{ order.city }}, {{ order.address }}<br>
+                    {% if order.postal_code %}
+                        Індекс: {{ order.postal_code }}
+                    {% endif %}
+                </p>
+
+                <p style="background:#f8fafc; padding:16px;
+                          border-radius:10px; color:#64748b;
+                          font-size:13px; line-height:1.6;">
+                    Це тестове замовлення навчального проєкту.
+                    Реальна оплата та доставка не виконуються.
+                </p>
+
+            </td>
+        </tr>
+
+        <!-- Підвал -->
+        <tr>
+            <td style="background:#f8fafc; padding:24px;
+                       text-align:center; color:#64748b;
+                       font-size:13px;">
+
+                <strong>⚡ VOLTIX</strong>
+
+                <p>
+                    Дякуємо, що обрали наш магазин!
+                </p>
+
+                <p style="margin-bottom:0;">
+                    © VOLTIX — навчальний проєкт
+                </p>
+
+            </td>
+        </tr>
+
+    </table>
+
+</body>
+</html>

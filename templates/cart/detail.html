@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Кошик — VOLTIX{% endblock %}
+
+{% block breadcrumbs %}
+<nav class="container vx-cart-breadcrumbs mt-4" aria-label="Навігаційний шлях">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{% url 'store:home' %}">Головна</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Кошик</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/voltix-cart.css' %}">
+<section class="vx-cart container my-4 my-lg-5" data-cart-container data-vx-cart>
+    <div class="vx-cart-heading">
+        <div>
+            <span class="vx-cart-eyebrow">⚡ VOLTIX / ОФОРМЛЕННЯ ПОКУПКИ</span>
+            <h1>Ваш кошик <span class="vx-cart-title-icon" aria-hidden="true">🛒</span></h1>
+            <p>Усе для нового технологічного досвіду — в одному місці.</p>
+        </div>
+        <a href="{% url 'store:product_list' %}" class="vx-cart-back">← Продовжити покупки</a>
+    </div>
+
+    <div class="vx-cart-error alert alert-danger" data-cart-message hidden role="alert"></div>
+
+    {% if cart|length %}
+    <div class="row g-4 align-items-start">
+        <div class="col-lg-8">
+            <div class="vx-cart-list-heading">
+                <h2>Товари в кошику</h2>
+                <span class="vx-cart-list-count">Позицій: {{ cart|length }}</span>
+            </div>
+            <div class="vx-cart-items">
+                {% for item in cart %}
+                <article class="ajax-cart-item vx-cart-item" data-cart-row data-stock="{{ item.product.stock }}">
+                    <a class="ajax-cart-image vx-cart-picture" href="{% url 'store:product_detail' item.product.slug %}" aria-label="Переглянути {{ item.product.name }}">
+                        {% with photo=item.product.images.all|first %}
+                            {% if photo %}
+                                <img src="{{ photo.image.url }}" alt="{{ photo.alt_text|default:item.product.name }}" loading="lazy">
+                            {% else %}
+                                <span class="vx-cart-no-photo" aria-hidden="true">📦</span>
+                            {% endif %}
+                        {% endwith %}
+                    </a>
+
+                    <div class="ajax-cart-info vx-cart-info">
+                        <span class="vx-cart-category">{{ item.product.category.name }}</span>
+                        <a href="{% url 'store:product_detail' item.product.slug %}" class="ajax-cart-name vx-cart-name">{{ item.product.name }}</a>
+                        <p class="ajax-cart-price vx-cart-unit-price">{{ item.price }} ₴ / шт.</p>
+                        <p class="ajax-cart-stock vx-cart-stock">✓ На складі: {{ item.product.stock }} шт.</p>
+
+                        <div class="vx-cart-actions">
+                            <form method="POST" action="{% url 'cart:cart_update' item.product.id %}"
+                                  data-cart-update-form data-ajax-url="{% url 'cart:ajax_cart_update' item.product.id %}">
+                                {% csrf_token %}
+                                <div class="ajax-cart-controls vx-cart-controls">
+                                    <button type="button" class="btn btn-outline-secondary" data-cart-action="decrease" aria-label="Зменшити кількість">−</button>
+                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}"
+                                           class="form-control" aria-label="Кількість товару" required>
+                                    <button type="button" class="btn btn-outline-secondary" data-cart-action="increase" aria-label="Збільшити кількість">+</button>
+                                    <button type="submit" class="btn btn-outline-primary btn-sm vx-cart-update">Оновити</button>
+                                </div>
+                            </form>
+                            <form method="POST" action="{% url 'cart:cart_remove' item.product.id %}"
+                                  data-cart-remove-form data-ajax-url="{% url 'cart:ajax_cart_remove' item.product.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-link text-danger vx-cart-remove">🗑 Видалити</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="ajax-cart-item-total vx-cart-line-total">
+                        <small>Сума</small>
+                        <strong data-item-total>{{ item.total_price }} ₴</strong>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+            <div class="vx-cart-assurance">
+                <div><span aria-hidden="true">🔒</span><div><strong>Захищений акаунт</strong><small>Дані покупця під захистом</small></div></div>
+                <div><span aria-hidden="true">🚚</span><div><strong>Доставка по Україні</strong><small>Обери спосіб під час оформлення</small></div></div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <aside class="ajax-cart-summary vx-cart-summary">
+                <div class="vx-cart-summary-top"><span class="vx-cart-summary-mark" aria-hidden="true">⚡</span><span>ПІДСУМОК ПОКУПКИ</span></div>
+                <h2>Ваше замовлення</h2>
+                <div class="vx-cart-summary-row"><span>Вартість товарів</span><strong class="ajax-cart-total" data-cart-total>{{ cart.get_total_price }} ₴</strong></div>
+                <div class="vx-cart-summary-divider"></div>
+                <div class="vx-cart-summary-row vx-cart-summary-payable"><span>Разом</span><strong data-vx-cart-payable>{{ cart.get_total_price }} ₴</strong></div>
+                <p class="vx-cart-summary-note">Промокод і знижку можна застосувати під час оформлення замовлення. Вартість доставки визначається окремо.</p>
+                <a href="{% url 'orders:checkout_address' %}" class="btn vx-cart-checkout">Оформити замовлення <span aria-hidden="true">→</span></a>
+                <button type="button" class="vx-cart-preview-trigger" data-vx-cart-preview-open>Швидкий перегляд кошика ↗</button>
+                <div class="vx-cart-summary-foot">🔐 Безпечне оформлення покупки</div>
+            </aside>
+        </div>
+    </div>
+
+    <dialog class="vx-cart-dialog" data-vx-cart-dialog aria-labelledby="vx-cart-dialog-title">
+        <div class="vx-cart-dialog-head"><div><span class="vx-cart-eyebrow">⚡ VOLTIX</span><h2 id="vx-cart-dialog-title">Огляд кошика</h2></div>
+            <button type="button" class="vx-cart-dialog-close" data-vx-cart-preview-close aria-label="Закрити вікно">×</button></div>
+        <div class="vx-cart-dialog-list" data-vx-cart-dialog-list></div>
+        <div class="vx-cart-dialog-total"><span>Разом</span><strong data-vx-cart-dialog-total></strong></div>
+        <div class="vx-cart-dialog-actions"><button type="button" class="btn vx-cart-dialog-secondary" data-vx-cart-preview-close>Продовжити перегляд</button>
+            <a href="{% url 'orders:checkout_address' %}" class="btn vx-cart-checkout">До оформлення →</a></div>
+    </dialog>
+
+    {% else %}
+    <div class="ajax-cart-empty vx-cart-empty">
+        <div class="vx-cart-empty-symbol" aria-hidden="true">🛒</div>
+        <span class="vx-cart-eyebrow">ЗНАЙДЕМО ЩОСЬ ЦІКАВЕ?</span>
+        <h2>У кошику поки порожньо</h2>
+        <p>Переглянь каталог VOLTIX — там на тебе чекають техніка, гаджети та аксесуари.</p>
+        <a href="{% url 'store:product_list' %}" class="btn vx-cart-checkout">Перейти до каталогу →</a>
+    </div>
+    {% endif %}
+</section>
+<script src="{% static 'js/cart.js' %}" defer></script>
+<script src="{% static 'js/voltix-cart.js' %}" defer></script>
+{% endblock %}

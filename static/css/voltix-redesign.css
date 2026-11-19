@@ -1,0 +1,131 @@
+/* VOLTIX visual system: this layer overrides existing header/footer rules only. */
+:root {
+  --vx-navy: #101b35;
+  --vx-navy-2: #162746;
+  --vx-blue: #397bff;
+  --vx-blue-dark: #245be0;
+  --vx-lime: #c6fa5f;
+  --vx-text: #182642;
+  --vx-muted: #718096;
+  --vx-border: #e5ebf3;
+  --vx-surface: #f5f7fb;
+  --vx-radius: 16px;
+}
+body { color: var(--vx-text); background: var(--vx-surface); }
+.vx-skip-link { position: absolute; left: 8px; top: -70px; background: #fff; color: #000; z-index: 9999; padding: 12px; }
+.vx-skip-link:focus { top: 8px; }
+.vx-topbar { background: #0b152b; color: #cbd7ed; font-size: .78rem; }
+.vx-topbar-inner { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 30px; }
+.vx-topbar-right { color: #aabbd6; }
+.vx-header.site-header { background: var(--vx-navy); color: #fff; border: none; box-shadow: 0 12px 30px rgba(16,27,53,.1); position: relative; z-index: 30; padding: 0; }
+.vx-header .vx-header-main { display: flex; align-items: center; gap: 18px; min-height: 88px; }
+.vx-header a { text-decoration: none; }
+.vx-header .vx-logo, .vx-footer .vx-logo { display: inline-flex; align-items: center; gap: 9px; color: #fff; font-size: 1.7rem; font-weight: 900; letter-spacing: -.07em; line-height: 1; white-space: nowrap; }
+.vx-logo-symbol { display: grid; place-items: center; height: 39px; width: 39px; background: var(--vx-lime); color: #101b35; border-radius: 11px; font-size: 1.8rem; font-weight: 900; transform: rotate(-7deg); }
+.vx-logo-accent { color: var(--vx-lime); }
+.vx-menu-trigger { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 46px; border: 1px solid rgba(255,255,255,.17); padding: 0 15px; border-radius: 11px; background: var(--vx-navy-2); color: white; font-weight: 700; white-space: nowrap; transition: background .2s, border-color .2s; }
+.vx-menu-trigger:hover, .vx-menu-trigger[aria-expanded="true"] { background: #23375b; border-color: rgba(255,255,255,.4); }
+.vx-menu-trigger-icon { font-size: 1.2rem; line-height: 1; }
+.vx-chevron { opacity: .65; }
+.vx-search { flex: 1; display: flex; align-items: center; background: #fff; border: 2px solid transparent; border-radius: 12px; overflow: hidden; min-width: 0; height: 50px; }
+.vx-search:focus-within { border-color: #8bb4ff; }
+.vx-search-icon { flex: 0 0 auto; margin-left: 15px; color: #8b97a9; }
+.vx-search input { width: 100%; min-width: 0; flex: 1; padding: 0 12px; height: 100%; outline: none; border: 0; color: var(--vx-text); font-size: .92rem; background: transparent; }
+.vx-search input::placeholder { color: #8a96a8; }
+.vx-search button { border: 0; background: var(--vx-lime); color: #101b35; height: 100%; padding: 0 22px; font-weight: 800; transition: background .2s; }
+.vx-search button:hover { background: #b2e84a; }
+.vx-header-actions { display: flex; align-items: center; gap: 9px; }
+.vx-header .vx-header-action { color: #eaf0fa; display: flex; align-items: center; position: relative; gap: 7px; padding: 8px 9px; border-radius: 11px; min-height: 46px; font-size: .88rem; font-weight: 600; }
+.vx-header .vx-header-action:hover { color: #fff; background: #23375b; }
+.vx-action-icon, .vx-cart-icon { font-size: 1.25rem; line-height: 1; }
+.vx-username { max-width: 92px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+.vx-header .vx-cart-count { position: absolute; top: 0; right: -1px; min-width: 19px; height: 19px; font-size: .72rem; background: var(--vx-lime); color: var(--vx-navy); border: 2px solid var(--vx-navy); border-radius: 12px; display: grid; place-items: center; line-height: 1; padding: 0 3px; font-weight: 900; }
+.vx-header-nav { border-top: 1px solid rgba(255,255,255,.1); display: flex; align-items: center; gap: 29px; min-height: 43px; font-size: .87rem; }
+.vx-header .vx-header-nav a { color: #d1dbef; font-weight: 600; transition: color .2s; }
+.vx-header .vx-header-nav a:hover { color: var(--vx-lime); }
+.vx-nav-spacer { flex: 1; }
+.vx-nav-note { color: #8fa2c3; font-size: .8rem; }
+.vx-category-panel[hidden] { display: none !important; }
+.vx-category-panel { background: white; color: var(--vx-text); position: absolute; left: max(12px, calc((100vw - 1320px)/2 + 12px)); right: max(12px, calc((100vw - 1320px)/2 + 12px)); top: calc(100% - 2px); border: 1px solid var(--vx-border); box-shadow: 0 22px 60px rgba(10,22,46,.22); padding: 22px; border-radius: 0 0 19px 19px; }
+.vx-category-panel-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; font-size: 1.15rem; }
+.vx-menu-close { border: 0; background: #eef2f8; color: #2b3c55; width: 34px; height: 34px; border-radius: 9px; }
+.vx-menu-close:hover { background: #dfe7f3; }
+.vx-category-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; }
+.vx-header .vx-category-grid a { display: flex; align-items: center; gap: 11px; border: 1px solid #e8edf5; padding: 14px 12px; border-radius: 12px; color: #1e2a41; font-weight: 700; transition: .2s; }
+.vx-header .vx-category-grid a:hover { border-color: #98b6ff; background: #f3f7ff; transform: translateY(-2px); }
+.vx-category-emoji { display: grid; place-items: center; width: 36px; height: 36px; flex: 0 0 auto; background: #edf3ff; color: var(--vx-blue); border-radius: 9px; }
+.vx-category-all .vx-category-emoji { background: #ecfbd6; color: #365f06; }
+.vx-category-grid small { display: block; color: #74849a; font-weight: 400; font-size: .75rem; margin-top: 2px; }
+.vx-category-footnote { font-size: .75rem; color: #8290a3; margin: 14px 0 0; }
+.vx-flash-messages { padding-top: 14px; }
+.vx-footer.site-footer { background: #0f1b33; padding: 0; color: #c7d3e8; margin-top: 65px; text-align: left; }
+.vx-footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 40px; padding: 55px 0 44px; }
+.vx-footer .vx-footer-logo { margin-bottom: 20px; }
+.vx-footer p { font-size: .9rem; color: #9baac3; line-height: 1.75; max-width: 310px; margin: 0; }
+.vx-footer-column { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.vx-footer-column strong { color: white; margin-bottom: 7px; }
+.vx-footer-column a, .vx-footer-text-button { color: #aab9d0; font-size: .87rem; text-decoration: none; }
+.vx-footer-column a:hover, .vx-footer-text-button:hover { color: var(--vx-lime); }
+.vx-footer-text-button { border: 0; padding: 0; background: transparent; }
+.vx-footer-mini { color: #7789a7; font-size: .8rem; }
+.vx-footer-bottom { border-top: 1px solid rgba(255,255,255,.1); display: flex; justify-content: space-between; gap: 15px; flex-wrap: wrap; color: #91a0ba; font-size: .8rem; padding: 22px 0; }
+@media(max-width: 1199px) {
+  .vx-header .vx-header-main { gap: 12px; }
+  .vx-header .vx-logo { font-size: 1.42rem; }
+  .vx-header .vx-action-label { display: none; }
+  .vx-header .vx-header-action { padding: 8px 12px; }
+  .vx-search button { padding: 0 14px; }
+  .vx-category-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+}
+@media(max-width: 767px) {
+  .vx-topbar-right, .vx-nav-note { display: none; }
+  .vx-topbar-inner { justify-content: center; }
+  .vx-header .vx-header-main { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; padding: 12px 0; }
+  .vx-header .vx-logo { grid-column: 1; grid-row: 1; }
+  .vx-menu-trigger { grid-column: 2; grid-row: 1; min-height: 42px; padding: 0 11px; }
+  .vx-menu-trigger .vx-chevron, .vx-menu-trigger span:nth-child(2) { display: none; }
+  .vx-header-actions { grid-column: 3; grid-row: 1; }
+  .vx-header .vx-header-action { padding: 8px 5px; }
+  .vx-search { grid-column: 1 / -1; grid-row: 2; height: 45px; }
+  .vx-search button { padding: 0 17px; }
+  .vx-header-nav { gap: 18px; overflow-x: auto; white-space: nowrap; font-size: .8rem; }
+  .vx-nav-spacer { display: none; }
+  .vx-category-panel { left: 10px; right: 10px; padding: 15px; max-height: 70vh; overflow-y: auto; }
+  .vx-category-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .vx-footer-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 30px 17px; padding: 40px 0; }
+}
+@media(max-width: 420px) {
+  .vx-header .vx-logo { font-size: 1.3rem; }
+  .vx-logo-symbol { height: 34px; width: 34px; font-size: 1.5rem; }
+  .vx-header .vx-header-action { padding: 7px 3px; }
+  .vx-category-grid { grid-template-columns: 1fr; }
+  .vx-header-nav { gap: 15px; }
+}
+@media(prefers-reduced-motion: reduce) { .vx-header *, .vx-footer * { transition: none !important; } }
+
+
+/* VOLTIX — Wishlist у шапці */
+
+.vx-wishlist-link {
+    position: relative;
+}
+
+.vx-wishlist-counter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    border-radius: 20px;
+    background: #397bff;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.vx-wishlist-heart.is-active {
+    color: #e64670;
+    background: #fff1f5;
+}
+

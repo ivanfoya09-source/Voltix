@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Особистий кабінет — VOLTIX{% endblock %}
+
+{% block breadcrumbs %}
+<nav class="container vx-profile-breadcrumbs mt-4" aria-label="Навігаційні крихти">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{% url 'store:home' %}">Головна</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Особистий кабінет</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/voltix-profile.css' %}">
+
+<section class="vx-profile container" aria-labelledby="vx-profile-title">
+    <div class="vx-profile-hero">
+        <div class="vx-profile-hero-copy">
+            <span class="vx-profile-eyebrow">⚡ VOLTIX ACCOUNT</span>
+            <h1 id="vx-profile-title">Особистий кабінет</h1>
+            <p>Керуйте своїми даними та переглядайте замовлення в одному місці.</p>
+        </div>
+        <div class="vx-profile-avatar" aria-hidden="true">{{ request.user.username|first|upper }}</div>
+    </div>
+
+    <div class="vx-profile-layout">
+        <aside class="vx-profile-sidebar" aria-label="Розділи кабінету">
+            <div class="vx-profile-person">
+                <span class="vx-profile-person-icon" aria-hidden="true">👤</span>
+                <div class="vx-profile-person-text">
+                    <strong>{{ request.user.username }}</strong>
+                    <small>Ваш акаунт VOLTIX</small>
+                </div>
+            </div>
+            <div class="vx-profile-side-links">
+                <a href="#vx-profile-data" class="vx-profile-side-link is-active" aria-current="page">
+                    <span aria-hidden="true">⚙️</span> Мої дані
+                </a>
+                <a href="{% url 'orders:order_list' %}" class="vx-profile-side-link">
+                    <span aria-hidden="true">📦</span> Мої замовлення
+                    <span aria-hidden="true">↗</span>
+                </a>
+                <a href="{% url 'store:product_list' %}" class="vx-profile-side-link">
+                    <span aria-hidden="true">🛍️</span> До каталогу
+                    <span aria-hidden="true">↗</span>
+                </a>
+            </div>
+            <div class="vx-profile-sidebar-note">Ваші дані зберігаються в акаунті магазину.</div>
+        </aside>
+
+        <div class="vx-profile-main">
+            <div class="vx-profile-card" id="vx-profile-data">
+                <div class="vx-profile-card-heading">
+                    <div>
+                        <span class="vx-profile-kicker">НАЛАШТУВАННЯ ПРОФІЛЮ</span>
+                        <h2>Мої дані</h2>
+                        <p>Перевіряйте та оновлюйте контактну інформацію.</p>
+                    </div>
+                    <span class="vx-profile-heading-icon" aria-hidden="true">✎</span>
+                </div>
+
+                <form method="POST" class="vx-profile-form">
+                    {% csrf_token %}
+                    {% if user_form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">{{ user_form.non_field_errors }}</div>
+                    {% endif %}
+                    {% if profile_form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">{{ profile_form.non_field_errors }}</div>
+                    {% endif %}
+
+                    <div class="vx-profile-field-grid">
+                        {% for field in user_form %}
+                            <div class="vx-profile-field {% if field.errors %}has-error{% endif %}">
+                                <label for="{{ field.id_for_label }}" class="vx-profile-label">{{ field.label }}{% if field.field.required %} <span aria-hidden="true">*</span>{% endif %}</label>
+                                {{ field }}
+                                {% if field.help_text %}<div class="vx-profile-help">{{ field.help_text }}</div>{% endif %}
+                                {% for error in field.errors %}<div class="vx-profile-error" role="alert">{{ error }}</div>{% endfor %}
+                            </div>
+                        {% endfor %}
+                        {% for field in profile_form %}
+                            <div class="vx-profile-field {% if field.errors %}has-error{% endif %}">
+                                <label for="{{ field.id_for_label }}" class="vx-profile-label">{{ field.label }}{% if field.field.required %} <span aria-hidden="true">*</span>{% endif %}</label>
+                                {{ field }}
+                                {% if field.help_text %}<div class="vx-profile-help">{{ field.help_text }}</div>{% endif %}
+                                {% for error in field.errors %}<div class="vx-profile-error" role="alert">{{ error }}</div>{% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="vx-profile-form-footer">
+                        <p><span aria-hidden="true">🔒</span> Зміни будуть збережені у вашому профілі.</p>
+                        <button type="submit" class="vx-profile-save">Зберегти зміни <span aria-hidden="true">→</span></button>
+                    </div>
+                </form>
+            </div>
+
+            <a href="{% url 'orders:order_list' %}" class="vx-profile-orders-card">
+                <span class="vx-profile-orders-icon" aria-hidden="true">📦</span>
+                <span class="vx-profile-orders-copy">
+                    <strong>Мої замовлення</strong>
+                    <span>Перегляньте історію покупок, деталі доставки та статуси замовлень.</span>
+                </span>
+                <span class="vx-profile-orders-arrow" aria-hidden="true">→</span>
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+
+{% block title %}
+Замовлення №{{ order.id }} — VOLTIX
+{% endblock %}
+
+{% block breadcrumbs %}
+<nav class="container mt-4" aria-label="Breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'store:home' %}">Головна</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'orders:order_list' %}">
+                Мої замовлення
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            №{{ order.id }}
+        </li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<section class="container orders-page my-5">
+
+    <a
+        href="{% url 'orders:order_list' %}"
+        class="d-inline-block mb-4 text-decoration-none"
+    >
+        ← Усі мої замовлення
+    </a>
+
+    <div class="orders-heading">
+
+        <div>
+            <span class="orders-eyebrow">
+                VOLTIX ORDER TRACKING
+            </span>
+
+            <h1>Замовлення №{{ order.id }}</h1>
+
+            <p>
+                Створено:
+                {{ order.created_at|date:"d.m.Y о H:i" }}
+            </p>
+        </div>
+
+        <span class="order-status status-{{ order.status }}">
+            {{ order.get_status_display }}
+        </span>
+
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Основна інформація -->
+        <div class="col-lg-8">
+
+            <!-- Історія статусів -->
+            <div class="order-detail-card mb-4">
+
+                <h2>🚚 Відстеження замовлення</h2>
+
+                <p class="text-muted">
+                    Поточний статус:
+                    <strong>{{ order.get_status_display }}</strong>
+                </p>
+
+                {% if order.estimated_delivery_date %}
+                    <p class="order-delivery-date">
+                        📅 Очікувана доставка:
+                        {{ order.estimated_delivery_date|date:"d.m.Y" }}
+                    </p>
+                {% endif %}
+
+                <div class="order-timeline">
+
+                    {% for history in order.status_history.all %}
+
+                        <div class="order-timeline-item">
+
+                            <span class="order-timeline-dot"></span>
+
+                            <div>
+                                <strong>
+                                    {{ history.get_new_status_display }}
+                                </strong>
+
+                                <small>
+                                    {{ history.created_at|date:"d.m.Y H:i" }}
+                                </small>
+
+                                {% if history.note %}
+                                    <p>{{ history.note }}</p>
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    {% empty %}
+
+                        <p class="text-muted">
+                            Історія статусів поки відсутня.
+                        </p>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <!-- Товари -->
+            <div class="order-detail-card mb-4">
+
+                <h2>🛍️ Придбані товари</h2>
+
+                {% for item in order.items.all %}
+
+                    <div class="order-detail-product">
+
+                        <div class="order-detail-product-info">
+
+                            {% if item.product %}
+                                <a href="{% url 'store:product_detail' item.product.slug %}">
+                                    {{ item.product_name }}
+                                </a>
+                            {% else %}
+                                <strong>{{ item.product_name }}</strong>
+                            {% endif %}
+
+                            <small>
+                                {{ item.quantity }} шт.
+                                × {{ item.price }} ₴
+                            </small>
+
+                        </div>
+
+                        <strong>
+                            {{ item.get_total_price }} ₴
+                        </strong>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- Адреса доставки -->
+            <div class="order-detail-card">
+
+                <h2>📍 Інформація про доставку</h2>
+
+                <dl class="checkout-details">
+
+                    <div>
+                        <dt>Отримувач</dt>
+                        <dd>{{ order.full_name }}</dd>
+                    </div>
+
+                    <div>
+                        <dt>Телефон</dt>
+                        <dd>{{ order.phone }}</dd>
+                    </div>
+
+                    <div>
+                        <dt>Email</dt>
+                        <dd>{{ order.email }}</dd>
+                    </div>
+
+                    <div>
+                        <dt>Місто</dt>
+                        <dd>{{ order.city }}</dd>
+                    </div>
+
+                    <div>
+                        <dt>Адреса</dt>
+                        <dd>{{ order.address }}</dd>
+                    </div>
+
+                    {% if order.postal_code %}
+                        <div>
+                            <dt>Поштовий індекс</dt>
+                            <dd>{{ order.postal_code }}</dd>
+                        </div>
+                    {% endif %}
+
+                </dl>
+
+            </div>
+
+        </div>
+
+
+        <!-- Права колонка -->
+        <div class="col-lg-4">
+
+            <div class="order-detail-card order-summary-card">
+
+                <h2>Підсумок замовлення</h2>
+
+                <div class="order-summary-row">
+                    <span>Вартість товарів</span>
+                    <strong>{{ order.subtotal }} ₴</strong>
+                </div>
+
+                {% if order.coupon %}
+                    <div class="order-summary-row">
+                        <span>Промокод</span>
+                        <strong>{{ order.coupon.code }}</strong>
+                    </div>
+                {% endif %}
+
+                {% if order.discount_amount %}
+                    <div class="order-summary-row text-success">
+                        <span>Знижка</span>
+                        <strong>−{{ order.discount_amount }} ₴</strong>
+                    </div>
+                {% endif %}
+
+                <hr>
+
+                <div class="order-summary-row total">
+                    <span>Разом</span>
+                    <strong>{{ order.total }} ₴</strong>
+                </div>
+
+                <p class="text-muted small mt-3">
+                    Це навчальне замовлення.
+                    Онлайн-оплату та реальну доставку
+                    поки не підключено.
+                </p>
+
+                <a
+                    href="{% url 'store:product_list' %}"
+                    class="btn btn-outline-primary w-100 mt-3"
+                >
+                    Повернутися до покупок
+                </a>
+
+
+                <!-- =====================================
+                    СКАСУВАННЯ ЗАМОВЛЕННЯ
+                ===================================== -->
+
+                {% if order.can_cancel %}
+
+                    <div class="order-cancel-section">
+
+                        <h5>Скасування замовлення</h5>
+
+                        <p>
+                            Ви можете скасувати це замовлення
+                            протягом 24 годин після оформлення,
+                            поки його не відправлено.
+                        </p>
+
+                        <form
+                            method="POST"
+                            action="{% url 'orders:order_cancel' order.id %}"
+                            onsubmit="return confirm('Ви впевнені, що хочете скасувати замовлення №{{ order.id }}?');"
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="btn btn-outline-danger w-100"
+                            >
+                                ✕ Скасувати замовлення
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                {% elif order.status == "cancelled" %}
+
+                    <div class="order-cancelled-message">
+                        <strong>✕ Замовлення скасовано</strong>
+
+                        <p>
+                            Це замовлення більше не обробляється.
+                        </p>
+                    </div>
+
+                {% endif %}
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+{% endblock %}

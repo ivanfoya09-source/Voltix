@@ -1,0 +1,75 @@
+{% if recently_viewed_products %}
+
+<section class="recent-products-section"
+         aria-label="Історія переглядів">
+
+    <div class="recent-products-heading">
+        <div>
+            <span class="recent-products-eyebrow">
+                VOLTIX DISCOVER
+            </span>
+
+            <h2>Нещодавно переглянуті</h2>
+
+            <p>
+                Товари, які ви переглядали раніше.
+            </p>
+        </div>
+    </div>
+
+    <div class="recent-products-grid">
+
+        {% for recent_product in recently_viewed_products %}
+
+            <a
+                href="{% url 'store:product_detail' recent_product.slug %}"
+                class="recent-product-card"
+            >
+
+                <div class="recent-product-image">
+
+                    {% with photo=recent_product.images.all|first %}
+
+                        {% if photo %}
+
+                            <img
+                                src="{{ photo.image.url }}"
+                                alt="{{ photo.alt_text|default:recent_product.name }}"
+                                loading="lazy"
+                            >
+
+                        {% else %}
+
+                            <span>📦</span>
+
+                        {% endif %}
+
+                    {% endwith %}
+
+                </div>
+
+                <div class="recent-product-info">
+
+                    <small>
+                        {{ recent_product.category.name }}
+                    </small>
+
+                    <h3>
+                        {{ recent_product.name }}
+                    </h3>
+
+                    <strong>
+                        {{ recent_product.price }} ₴
+                    </strong>
+
+                </div>
+
+            </a>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+{% endif %}

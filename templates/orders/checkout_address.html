@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Оформлення замовлення — VOLTIX{% endblock %}
+
+{% block breadcrumbs %}
+<nav class="container mt-4" aria-label="Breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'store:home' %}">Головна</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'cart:cart_detail' %}">Кошик</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Оформлення замовлення
+        </li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<section class="container checkout-page my-5">
+
+    <div class="checkout-heading">
+        <span class="checkout-eyebrow">VOLTIX CHECKOUT</span>
+        <h1>Оформлення замовлення</h1>
+        <p>Заповніть дані отримувача та адресу доставки.</p>
+    </div>
+
+    <div class="checkout-steps">
+        <div class="checkout-step active">
+            <span class="checkout-step-number">1</span>
+            <span>Доставка</span>
+        </div>
+
+        <div class="checkout-step-line"></div>
+
+        <div class="checkout-step">
+            <span class="checkout-step-number">2</span>
+            <span>Перевірка</span>
+        </div>
+
+        <div class="checkout-step-line"></div>
+
+        <div class="checkout-step">
+            <span class="checkout-step-number">3</span>
+            <span>Підтвердження</span>
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-8">
+            <div class="checkout-card">
+
+                <div class="checkout-card-heading">
+                    <span>📍</span>
+                    <h2>Контактні дані та доставка</h2>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    {% for error in form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                    <div class="row g-3">
+
+                        {% for field in form %}
+                            <div class="col-md-6">
+
+                                <label
+                                    class="form-label fw-semibold"
+                                    for="{{ field.id_for_label }}"
+                                >
+                                    {{ field.label }}
+
+                                    {% if field.field.required %}
+                                        <span class="text-danger">*</span>
+                                    {% endif %}
+                                </label>
+
+                                {{ field }}
+
+                                {% for error in field.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+                        {% endfor %}
+
+                    </div>
+
+                    <div class="checkout-actions mt-4">
+                        <a
+                            href="{% url 'cart:cart_detail' %}"
+                            class="btn btn-outline-secondary"
+                        >
+                            ← До кошика
+                        </a>
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            Продовжити →
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="checkout-summary">
+                <h3>Ваше замовлення</h3>
+
+                <hr>
+
+                {% for item in cart %}
+                    <div class="checkout-summary-item">
+                        <div>
+                            <strong>{{ item.product.name }}</strong>
+                            <small>{{ item.quantity }} шт.</small>
+                        </div>
+
+                        <span>{{ item.total_price }} ₴</span>
+                    </div>
+                {% endfor %}
+
+                <hr>
+
+                <div class="checkout-summary-total">
+                    <span>Сума товарів</span>
+                    <strong>{{ cart.get_total_price }} ₴</strong>
+                </div>
+
+                <p class="checkout-summary-hint">
+                    Вартість доставки уточнюватиметься
+                    під час оформлення.
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+{% endblock %}

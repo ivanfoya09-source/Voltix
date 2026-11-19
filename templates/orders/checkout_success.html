@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}
+Замовлення №{{ order.id }} — VOLTIX
+{% endblock %}
+
+
+{% block breadcrumbs %}
+<nav class="container mt-4" aria-label="Breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'store:home' %}">
+                Головна
+            </a>
+        </li>
+
+        <li class="breadcrumb-item active">
+            Замовлення №{{ order.id }}
+        </li>
+    </ol>
+</nav>
+{% endblock %}
+
+
+{% block content %}
+
+<section class="container my-5">
+
+    <div class="checkout-success">
+
+        <div class="checkout-success-icon">
+            ✓
+        </div>
+
+        <h1>Замовлення оформлено!</h1>
+
+        <p>
+            Дякуємо за оформлення покупки у VOLTIX.
+            Ваше замовлення успішно збережене.
+        </p>
+
+        <div class="checkout-success-number">
+            Номер замовлення:
+            <strong>№{{ order.id }}</strong>
+        </div>
+
+        <div class="checkout-success-details">
+
+            <div>
+                <span>Отримувач</span>
+                <strong>{{ order.full_name }}</strong>
+            </div>
+
+            <div>
+                <span>Місто</span>
+                <strong>{{ order.city }}</strong>
+            </div>
+
+            <div>
+                <span>Статус</span>
+                <strong>
+                    {{ order.get_status_display }}
+                </strong>
+            </div>
+
+            <div>
+                <span>Сума товарів</span>
+                <strong>{{ order.subtotal }} ₴</strong>
+            </div>
+
+            {% if order.discount_amount %}
+                <div>
+                    <span>Знижка</span>
+                    <strong class="text-success">
+                        −{{ order.discount_amount }} ₴
+                    </strong>
+                </div>
+            {% endif %}
+
+            <div class="checkout-success-total">
+                <span>Разом за товари</span>
+                <strong>{{ order.total }} ₴</strong>
+            </div>
+
+        </div>
+
+        <h3 class="mt-4 mb-3">Придбані товари</h3>
+
+        <div class="checkout-success-products">
+
+            {% for item in order.items.all %}
+                <div class="checkout-success-product">
+                    <span>
+                        {{ item.product_name }}
+                        × {{ item.quantity }}
+                    </span>
+
+                    <strong>
+                        {{ item.get_total_price }} ₴
+                    </strong>
+                </div>
+            {% endfor %}
+
+        </div>
+
+        <p class="text-muted small mt-4">
+            Онлайн-оплата та реальна доставка
+            поки не підключені.
+        </p>
+
+        <a
+            href="{% url 'store:product_list' %}"
+            class="btn btn-primary btn-lg mt-3"
+        >
+            Продовжити покупки →
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}
