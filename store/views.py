@@ -1,4 +1,3 @@
-
 from decimal import Decimal, InvalidOperation
 
 from django.core.cache import cache
@@ -17,30 +16,18 @@ from .cache_utils import (
 from .models import Category, Product
 
 
-# ==========================================
-# НАЛАШТУВАННЯ VOLTIX
-# ==========================================
-
+# НАЛАШТУВАННЯ 
 RECENTLY_VIEWED_SESSION_KEY = "voltix_recently_viewed"
 RECENTLY_VIEWED_LIMIT = 10
 
-# Кількість товарів на сторінці каталогу
 CATALOG_PRODUCTS_PER_PAGE = 12
 
-# Кількість відгуків на сторінці товару
 REVIEWS_PER_PAGE = 5
 
 
-# ==========================================
-# ДОПОМІЖНА ФУНКЦІЯ КЕШУВАННЯ
-# ==========================================
 
+# ДОПОМІЖНА ФУНКЦІЯ КЕШУВАННЯ
 def _cached_list(cache_key, queryset):
-    """
-    Отримує список із кешу.
-    Якщо даних немає — завантажує з БД
-    і зберігає на визначений час.
-    """
 
     result = cache.get(cache_key)
 
@@ -56,13 +43,10 @@ def _cached_list(cache_key, queryset):
     return result
 
 
-# ==========================================
-# 01. ГОЛОВНА СТОРІНКА
-# ==========================================
 
+# ГОЛОВНА СТОРІНКА
 def home(request):
 
-    # Головні категорії
     categories = _cached_list(
         HOME_CATEGORIES,
         Category.objects
@@ -70,7 +54,6 @@ def home(request):
         .order_by("name"),
     )
 
-    # Нові товари
     products = _cached_list(
         HOME_NEW,
         Product.objects
@@ -80,7 +63,6 @@ def home(request):
         .order_by("-created_at")[:8],
     )
 
-    # Хіти продажів
     featured_products = _cached_list(
         HOME_FEATURED,
         Product.objects
@@ -106,13 +88,9 @@ def home(request):
     )
 
 
-# ==========================================
-# 02. КАТАЛОГ ТОВАРІВ
-# ==========================================
-
+# КАТАЛОГ ТОВАРІВ
 def product_list(request):
 
-    # 1. Початковий QuerySet
     products = (
         Product.objects
         .filter(available=True)
@@ -120,14 +98,12 @@ def product_list(request):
         .prefetch_related("images")
     )
 
-    # 2. Категорії для бічної панелі
     categories = (
         Category.objects
         .filter(parent__isnull=True)
         .prefetch_related("children")
     )
 
-    # 3. Отримуємо параметри URL
     query = request.GET.get("q", "").strip()
 
     category_slug = request.GET.get(
@@ -146,20 +122,15 @@ def product_list(request):
         "sort", "newest"
     )
 
-    # ======================================
     # ПОШУК
-    # ======================================
-
     if query:
         products = products.filter(
             Q(name__icontains=query) |
             Q(description__icontains=query)
         )
 
-    # ======================================
+   
     # ФІЛЬТР ЗА КАТЕГОРІЄЮ
-    # ======================================
-
     if category_slug:
 
         category = get_object_or_404(
@@ -179,10 +150,8 @@ def product_list(request):
             ]
         )
 
-    # ======================================
-    # МІНІМАЛЬНА ЦІНА
-    # ======================================
 
+    # МІНІМАЛЬНА ЦІНА
     if min_price:
 
         try:
@@ -196,10 +165,8 @@ def product_list(request):
         except InvalidOperation:
             pass
 
-    # ======================================
-    # МАКСИМАЛЬНА ЦІНА
-    # ======================================
 
+    # МАКСИМАЛЬНА ЦІНА
     if max_price:
 
         try:
@@ -213,10 +180,8 @@ def product_list(request):
         except InvalidOperation:
             pass
 
-    # ======================================
-    # СОРТУВАННЯ
-    # ======================================
 
+    # СОРТУВАННЯ
     sort_options = {
         "newest": "-created_at",
         "oldest": "created_at",
@@ -233,76 +198,27 @@ def product_list(request):
         "pk",
     )
 
-    # ======================================
-    # ПАГІНАЦІЯ — 16 ТОВАРІВ
-    # ======================================
 
-    # Paginator працює із QuerySet.
-    # Django отримує лише потрібну частину
-    # товарів із бази даних.
-
-    paginator = Paginator(
-        products,
-        CATALOG_PRODUCTS_PER_PAGE,
-    )
-
-    # Наприклад: ?page=2
-    page_number = request.GET.get(
-        "page"
-    )
-
-    # Некоректні номери обробляються
-    # автоматично.
-    page_obj = paginator.get_page(
-        page_number
-    )
-
-    # ======================================
-    # ЗБЕРЕЖЕННЯ ФІЛЬТРІВ
-    # ======================================
-
-    # Беремо всі параметри URL.
+    paginator = Paginator(products,CATALOG_PRODUCTS_PER_PAGE)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
     query_params = request.GET.copy()
-
-    # Видаляємо лише старий номер сторінки.
     query_params.pop("page", None)
-
-    # Наприклад:
-    # q=asus&sort=price_asc
-    # Під час переходу додамо &page=2.
     page_query = query_params.urlencode()
 
-    # ======================================
-    # КОНТЕКСТ ШАБЛОНУ
-    # ======================================
 
     context = {
-
-        # Сумісність з існуючим шаблоном:
-        # for product in products
         "products": page_obj,
-
         "categories": categories,
-
         "selected_category": category_slug,
-
         "query": query,
-
         "min_price": min_price,
-
         "max_price": max_price,
-
         "sort": sort,
-
-        # Нові змінні пагінації
         "page_obj": page_obj,
-
         "paginator": paginator,
-
         "page_query": page_query,
-
         "total_products": paginator.count,
-
         "products_per_page": CATALOG_PRODUCTS_PER_PAGE,
     }
 
@@ -313,15 +229,8 @@ def product_list(request):
     )
 
 
-# ==========================================
-# 03. СТОРІНКА ТОВАРУ
-# ==========================================
-
+# СТОРІНКА ТОВАРУ
 def product_detail(request, slug):
-
-    # ======================================
-    # ОТРИМУЄМО ТОВАР
-    # ======================================
 
     product = get_object_or_404(
         Product.objects
@@ -330,10 +239,6 @@ def product_detail(request, slug):
         slug=slug,
         available=True,
     )
-
-    # ======================================
-    # ІСТОРІЯ ПЕРЕГЛЯДІВ
-    # ======================================
 
     recent_ids = request.session.get(
         RECENTLY_VIEWED_SESSION_KEY,
@@ -355,10 +260,6 @@ def product_detail(request, slug):
         RECENTLY_VIEWED_SESSION_KEY
     ] = recent_ids[:RECENTLY_VIEWED_LIMIT]
 
-    # ======================================
-    # СХВАЛЕНІ ВІДГУКИ
-    # ======================================
-
     reviews_queryset = (
         Review.objects
         .filter(
@@ -372,18 +273,10 @@ def product_detail(request, slug):
         )
     )
 
-    # ======================================
-    # РЕЙТИНГ
-    # ======================================
-
     review_stats = reviews_queryset.aggregate(
         average_rating=Avg("rating"),
         review_count=Count("id"),
     )
-
-    # ======================================
-    # ПАГІНАЦІЯ ВІДГУКІВ
-    # ======================================
 
     reviews_paginator = Paginator(
         reviews_queryset,
@@ -398,10 +291,6 @@ def product_detail(request, slug):
         reviews_page_number
     )
 
-    # ======================================
-    # ПРАВО НА ВІДГУК
-    # ======================================
-
     can_review = False
 
     if request.user.is_authenticated:
@@ -411,25 +300,16 @@ def product_detail(request, slug):
             product,
         )
 
-    # ======================================
-    # КОНТЕКСТ
-    # ======================================
-
     context = {
         "product": product,
-
         "approved_reviews": reviews_page,
-
         "reviews_page": reviews_page,
-
         "average_rating": review_stats[
             "average_rating"
         ],
-
         "review_count": review_stats[
             "review_count"
         ],
-
         "can_review": can_review,
     }
 

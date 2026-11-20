@@ -127,14 +127,9 @@ def cart_remove(request, product_id):
 
 
 
-# ============================================
-# VOLTIX — AJAX CART
-# ============================================
 
+# VOLTIX — AJAX CART
 def ajax_cart_response(cart, product=None):
-    """
-    Повертає актуальні дані кошика у JSON.
-    """
 
     response = {
         "success": True,
@@ -161,9 +156,6 @@ def ajax_cart_response(cart, product=None):
 
 @require_POST
 def ajax_cart_update(request, product_id):
-    """
-    Змінює кількість товару без перезавантаження.
-    """
 
     cart = Cart(request)
 
@@ -251,21 +243,9 @@ def ajax_cart_remove(request, product_id):
     return ajax_cart_response(cart, product)
 
 
-
-
-# ============================================
-# VOLTIX — AJAX ADD TO CART
-# ============================================
-
+# VOLTIX AJAX ADD TO CART
 @require_POST
 def ajax_cart_add(request, product_id):
-    """
-    Додає товар до кошика без перезавантаження.
-
-    Працює для:
-    - гостей (Django Session);
-    - авторизованих користувачів (CartItem).
-    """
 
     product = get_object_or_404(
         Product,
@@ -306,12 +286,10 @@ def ajax_cart_add(request, product_id):
             status=400
         )
 
-    # Скільки одиниць уже в кошику?
     existing_quantity = cart.cart.get(
         str(product.pk), {}
     ).get("quantity", 0)
 
-    # Перевіряємо, чи вистачить товару.
     if existing_quantity + quantity > product.stock:
         return JsonResponse(
             {
@@ -324,7 +302,6 @@ def ajax_cart_add(request, product_id):
             status=400
         )
 
-    # Додаємо товар.
     cart.add(
         product=product,
         quantity=quantity,

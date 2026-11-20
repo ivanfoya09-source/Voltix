@@ -25,14 +25,14 @@ urlpatterns = [
         name="cart_remove"
     ),
 
-    # AJAX — оновлення кількості
+    # AJAX оновлення кількості
     path(
         "ajax/update/<int:product_id>/",
         views.ajax_cart_update,
         name="ajax_cart_update"
     ),
 
-    # AJAX — видалення товару
+    # AJAX видалення товару
     path(
         "ajax/remove/<int:product_id>/",
         views.ajax_cart_remove,

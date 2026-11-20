@@ -21,7 +21,6 @@ def recently_viewed(request):
         .prefetch_related("images")
     )
 
-    # Зберігаємо порядок останніх переглядів
     products_by_id = {
         product.id: product
         for product in products

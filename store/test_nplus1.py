@@ -1,9 +1,3 @@
-"""VOLTIX: regression tests for N+1 SQL queries in storefront pages.
-
-Run: python manage.py test store.test_nplus1 -v 2
-
-Tests use Django's temporary test database; production data stays untouched.
-"""
 from decimal import Decimal
 
 from django.core.cache import cache
@@ -21,7 +15,7 @@ class StorefrontNPlusOneTests(TestCase):
         cls.category = Category.objects.create(
             name="N+1 test category", slug="n-plus-one-test-category"
         )
-        # Home loads 8 newest and 8 featured, catalog loads all.
+
         for number in range(12):
             Product.objects.create(
                 category=cls.category,
@@ -41,10 +35,10 @@ class StorefrontNPlusOneTests(TestCase):
         return len(queries)
 
     def test_catalog_query_count_does_not_grow_with_products(self):
-        """Serving 12 products must not cause 12 extra DB requests."""
+
         url = reverse("store:product_list")
         full_count = self._query_count(url)
-        # Keep just one product for comparison. Changes are rolled back after test.
+
         Product.objects.exclude(pk=Product.objects.first().pk).delete()
         one_count = self._query_count(url)
         self.assertLessEqual(

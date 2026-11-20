@@ -13,5 +13,5 @@ from .models import Category, Product, ProductImage
 @receiver(post_save, sender=ProductImage)
 @receiver(post_delete, sender=ProductImage)
 def invalidate_storefront(sender, using, **kwargs):
-    # Invalidate only after a successful DB transaction.
+
     transaction.on_commit(clear_storefront_cache, using=using)

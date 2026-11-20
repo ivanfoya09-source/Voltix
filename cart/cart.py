@@ -15,7 +15,7 @@ class Cart:
         self.is_authenticated = self.user.is_authenticated
 
         if self.is_authenticated:
-            # Кошик із бази даних
+            # Кошик з бази даних
             items = CartItem.objects.filter(
                 user=self.user
             ).values("product_id", "quantity")

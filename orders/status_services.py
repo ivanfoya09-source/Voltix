@@ -1,4 +1,3 @@
-
 from datetime import timedelta
 
 from django.db import transaction
@@ -38,16 +37,7 @@ def change_order_status(
     changed_by=None,
     note=""
 ):
-    """
-    Безпечно змінює статус замовлення.
 
-    - перевіряє дозволений перехід;
-    - записує історію;
-    - за потреби встановлює дату доставки;
-    - запускає email після commit.
-    """
-
-    # Імпортуємо тут, щоб уникнути циклічних імпортів.
     from .emails import send_order_status_email
 
     with transaction.atomic():
@@ -76,13 +66,10 @@ def change_order_status(
         }
 
         if new_status == Order.Status.SHIPPED:
-            # Демонстраційний прогноз: через 3 дні
             update_data["estimated_delivery_date"] = (
                 timezone.localdate() + timedelta(days=3)
             )
 
-        # Змінюємо статус лише якщо він не змінився
-        # з моменту прочитання замовлення.
         updated = Order.objects.filter(
             pk=order.pk,
             status=old_status,
@@ -113,29 +100,12 @@ def change_order_status(
 
 
 
-# ============================================
-# VOLTIX — СКАСУВАННЯ ЗАМОВЛЕННЯ
-# ============================================
 
+# СКАСУВАННЯ ЗАМОВЛЕННЯ
 def cancel_order(order_id, user):
-    """
-    Скасовує замовлення покупця.
-
-    Умови:
-    - замовлення належить користувачу;
-    - від створення минуло не більше 24 годин;
-    - статус pending або processing.
-
-    Усі зміни виконуються в одній транзакції.
-    """
-
     from .emails import send_order_status_email
 
     with transaction.atomic():
-
-        # Шукаємо тільки замовлення покупця.
-        # select_for_update блокує рядок
-        # у базах даних, які це підтримують.
         order = (
             Order.objects
             .select_for_update()
@@ -147,13 +117,11 @@ def cancel_order(order_id, user):
 
         now = timezone.now()
 
-        # Перевірка 24 годин
         if now > order.created_at + timedelta(hours=24):
             raise OrderStatusError(
                 "Минуло більше 24 годин після оформлення."
             )
 
-        # Скасовувати можна лише ці статуси
         allowed_statuses = [
             Order.Status.PENDING,
             Order.Status.PROCESSING,
@@ -166,9 +134,6 @@ def cancel_order(order_id, user):
 
         old_status = order.status
 
-        # Змінюємо статус атомарно.
-        # Важливо: тільки один запит може успішно
-        # змінити статус із попереднього на cancelled.
         updated = Order.objects.filter(
             pk=order.pk,
             user=user,
@@ -185,7 +150,6 @@ def cancel_order(order_id, user):
                 "Статус уже змінився. Оновіть сторінку."
             )
 
-        # Повертаємо товари на склад
         for item in order.items.all():
             if item.product_id:
                 from store.models import Product
@@ -196,7 +160,6 @@ def cancel_order(order_id, user):
                     stock=F("stock") + item.quantity
                 )
 
-        # Повертаємо одне використання промокоду
         if order.coupon_id:
             from .models import Coupon
 
@@ -207,7 +170,6 @@ def cancel_order(order_id, user):
                 used_count=F("used_count") - 1
             )
 
-        # Записуємо подію в історію
         OrderStatusHistory.objects.create(
             order=order,
             old_status=old_status,
@@ -216,7 +178,6 @@ def cancel_order(order_id, user):
             note="Замовлення скасовано покупцем.",
         )
 
-        # Лист — лише після успішного commit.
         transaction.on_commit(
             lambda pk=order.pk:
                 send_order_status_email(

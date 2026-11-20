@@ -17,10 +17,6 @@ from dotenv import load_dotenv
 from django.core.exceptions import ImproperlyConfigured
 
 
-# ==========================================
-# 01. BASE DIRECTORY / ENVIRONMENT
-# ==========================================
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(BASE_DIR / ".env")
@@ -41,9 +37,6 @@ def env_list(name, default=""):
     ]
 
 
-# ==========================================
-# 02. SECURITY / ENVIRONMENT
-# ==========================================
 
 DEBUG = env_bool("DEBUG", True)
 
@@ -74,9 +67,6 @@ CSRF_TRUSTED_ORIGINS = env_list(
 )
 
 
-# ==========================================
-# 03. APPLICATIONS
-# ==========================================
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -86,7 +76,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # VOLTIX
     "store.apps.StoreConfig",
     "accounts.apps.AccountsConfig",
     "cart.apps.CartConfig",
@@ -104,14 +93,10 @@ if ENABLE_DEBUG_TOOLBAR:
     INSTALLED_APPS.append("debug_toolbar")
 
 
-# ==========================================
-# 04. MIDDLEWARE
-# ==========================================
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
 
-    # Static files — WhiteNoise
     "whitenoise.middleware.WhiteNoiseMiddleware",
 
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -130,9 +115,6 @@ if ENABLE_DEBUG_TOOLBAR:
     )
 
 
-# ==========================================
-# 05. URLS / TEMPLATES
-# ==========================================
 
 ROOT_URLCONF = "config.urls"
 
@@ -164,17 +146,12 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 
-# ==========================================
-# 06. DATABASE
-# ==========================================
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL", ""
 ).strip()
 
 if DATABASE_URL:
-    # PostgreSQL або інша підтримувана БД
-    # через DATABASE_URL.
     try:
         import dj_database_url
     except ImportError as exc:
@@ -191,7 +168,7 @@ if DATABASE_URL:
     }
 
 else:
-    # SQLite дозволена лише для локальної розробки.
+
     if not DEBUG:
         raise ImproperlyConfigured(
             "DATABASE_URL is required when DEBUG=False. "
@@ -205,10 +182,6 @@ else:
         }
     }
 
-
-# ==========================================
-# 07. AUTHENTICATION
-# ==========================================
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 
@@ -247,9 +220,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# ==========================================
-# 08. LANGUAGE / TIMEZONE
-# ==========================================
 
 LANGUAGE_CODE = "uk"
 
@@ -260,9 +230,6 @@ USE_I18N = True
 USE_TZ = True
 
 
-# ==========================================
-# 09. STATIC FILES
-# ==========================================
 
 STATIC_URL = "/static/"
 
@@ -273,14 +240,9 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
-# ==========================================
-# 10. MEDIA FILES
-# ==========================================
-
 MEDIA_URL = "/media/"
 
-# Локально: Voltix/media/
-# Production: можна вказати інший постійний шлях.
+
 MEDIA_ROOT = Path(
     os.getenv(
         "MEDIA_ROOT",
@@ -289,10 +251,6 @@ MEDIA_ROOT = Path(
 )
 
 
-
-# ======================================
-# VOLTIX — Cloudinary Storage
-# ======================================
 
 USE_CLOUDINARY = env_bool("USE_CLOUDINARY", False)
 
@@ -317,7 +275,6 @@ STORAGES = {
     },
 }
 
-# Тести не потребують зібраного manifest.json
 import sys
 
 if "test" in sys.argv:
@@ -327,16 +284,6 @@ if "test" in sys.argv:
         ),
     }
 
-
-# ==========================================
-# TEST ENVIRONMENT
-# ==========================================
-
-# Під час тестування не потрібна перевірка
-# хешованого маніфесту CSS/JS.
-#
-# У звичайному режимі та production
-# WhiteNoise продовжить працювати.
 
 import sys
 
@@ -348,12 +295,7 @@ if "test" in sys.argv:
     }
 
 
-# ==========================================
-# 12. EMAIL
-# ==========================================
 
-# Поки залишаємо console backend.
-# Реальне надсилання листів налаштуємо окремо.
 MAILERS = {
     "default": {
         "BACKEND": (
@@ -368,9 +310,6 @@ DEFAULT_FROM_EMAIL = (
 )
 
 
-# ==========================================
-# 13. CACHE / REDIS
-# ==========================================
 
 REDIS_URL = os.getenv(
     "REDIS_URL", ""
@@ -402,9 +341,6 @@ else:
     }
 
 
-# ==========================================
-# 14. SESSION / CART
-# ==========================================
 
 CART_SESSION_ID = "voltix_cart"
 
@@ -415,22 +351,18 @@ SESSION_COOKIE_SAMESITE = "Lax"
 CSRF_COOKIE_SAMESITE = "Lax"
 
 
-# ==========================================
-# 15. PRODUCTION SECURITY
-# ==========================================
 
-# Не вмикаємо HTTPS-redirect для localhost.
 SECURE_SSL_REDIRECT = (
     env_bool("SECURE_SSL_REDIRECT", True)
     if not DEBUG else False
 )
 
-# Production cookies доступні тільки через HTTPS.
+
 SESSION_COOKIE_SECURE = not DEBUG
 
 CSRF_COOKIE_SECURE = not DEBUG
 
-# HSTS вмикаємо поступово після перевірки HTTPS.
+
 SECURE_HSTS_SECONDS = (
     int(os.getenv("SECURE_HSTS_SECONDS", "0"))
     if not DEBUG else 0
@@ -449,8 +381,6 @@ SECURE_REFERRER_POLICY = (
 X_FRAME_OPTIONS = "DENY"
 
 
-# Вмикати лише за довіреним reverse proxy,
-# який контролює X-Forwarded-Proto.
 if (
     not DEBUG
     and env_bool("TRUST_PROXY_SSL_HEADER", False)
@@ -461,18 +391,12 @@ if (
     )
 
 
-# ==========================================
-# 16. DEBUG TOOLBAR
-# ==========================================
 
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
 
-# ==========================================
-# 17. DEFAULT PRIMARY KEY
-# ==========================================
 
 DEFAULT_AUTO_FIELD = (
     "django.db.models.BigAutoField"

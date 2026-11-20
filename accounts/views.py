@@ -26,7 +26,6 @@ def rate_limited_response():
 class VoltixLoginView(LoginView):
     template_name = "accounts/login.html"
 
-    # Ліміт стосується тільки POST. GET сторінки входу не обмежуємо.
     @method_decorator(ratelimit(group="voltix_login", key="ip", rate="5/m", method="POST", block=False))
     def post(self, request, *args, **kwargs):
         if getattr(request, "limited", False):

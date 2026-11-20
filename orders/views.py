@@ -2,10 +2,7 @@ import uuid
 from datetime import date
 
 
-from .status_services import (
-    OrderStatusError,
-    cancel_order,
-)
+from .status_services import OrderStatusError, cancel_order
 
 from django.contrib import messages
 from django.db import transaction
@@ -22,12 +19,7 @@ from cart.cart import Cart
 from store.models import Product
 
 from .forms import CheckoutAddressForm, CouponApplyForm
-from .models import (
-    Coupon,
-    Order,
-    OrderItem,
-    OrderStatusHistory,
-)
+from .models import Coupon, Order, OrderItem, OrderStatusHistory
 from .services import (
     COUPON_SESSION_KEY,
     calculate_totals,
@@ -412,8 +404,6 @@ def checkout_confirm(request):
                 note="Замовлення створено покупцем.",
             )
 
-            # Email  лише після успішного замовлення
-            # збереження всього замовлення.
             transaction.on_commit(
                 lambda order_id=order.pk: send_order_confirmation(order_id)
             )
@@ -424,7 +414,7 @@ def checkout_confirm(request):
         return redirect("orders:checkout_review")
 
     except IntegrityError:
-        # Захист від повтору
+
         existing_order = Order.objects.filter(
             checkout_token=checkout_token
         ).first()
@@ -439,7 +429,6 @@ def checkout_confirm(request):
         )
         return redirect("orders:checkout_review")
 
-    # Виконуємо після commit
     cart.clear()
 
     request.session[LAST_ORDER_KEY] = order.pk
@@ -488,14 +477,13 @@ def checkout_success(request):
 # МОЇ ЗАМОВЛЕННЯ
 @login_required
 def order_list(request):
-    #  тільки замовлення поточного користувача
+
     orders = (
         Order.objects
         .filter(user=request.user)
         .order_by("-created_at", "-pk")
     )
 
-    # По 10 замовлень на ст
     paginator = Paginator(orders, 10)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
@@ -514,7 +502,7 @@ def order_list(request):
 # ДЕТАЛІ ЗАМОВЛЕННЯ
 @login_required
 def order_detail(request, order_id):
-    # щоб не видно чужі замовлення
+
     order = get_object_or_404(
         Order.objects
         .filter(user=request.user)
@@ -537,15 +525,12 @@ def order_detail(request, order_id):
 
 
 
-# ============================================
-# VOLTIX — СКАСУВАННЯ ПОКУПЦЕМ
-# ============================================
 
+# СКАСУВАННЯ ПОКУПЦЕМ
 @login_required
 @require_POST
 def order_cancel(request, order_id):
 
-    # Забороняємо скасовувати чужі замовлення.
     order = get_object_or_404(
         Order,
         pk=order_id,

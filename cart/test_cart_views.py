@@ -1,4 +1,3 @@
-"""VOLTIX: tests for guest cart and AJAX validation."""
 from decimal import Decimal
 
 from django.test import TestCase

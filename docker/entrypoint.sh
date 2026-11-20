@@ -14,7 +14,7 @@ echo "Collecting static files..."
 python manage.py collectstatic --noinput
 
 # 3. Міграції
-# Для локального Docker за замовчуванням вимкнено.
+# Для локального Docker.
 # У production можна ввімкнути RUN_MIGRATIONS=True.
 if [ "${RUN_MIGRATIONS:-False}" = "True" ]; then
     echo "Applying database migrations..."

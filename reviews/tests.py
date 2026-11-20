@@ -1,4 +1,3 @@
-
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
@@ -64,9 +63,7 @@ class ReviewTests(TestCase):
         )
 
     def create_review(self, **kwargs):
-        """
-        Допоміжний метод для створення відгуку.
-        """
+
         data = {
             "user": self.user,
             "product": self.product,

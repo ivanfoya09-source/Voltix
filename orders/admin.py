@@ -194,10 +194,6 @@ class OrderAdmin(admin.ModelAdmin):
     )
 
 
-    # =====================================
-    # ACTIONS — ЗМІНА СТАТУСІВ
-    # =====================================
-
     actions = [
         "mark_processing",
         "mark_shipped",

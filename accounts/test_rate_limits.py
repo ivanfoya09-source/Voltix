@@ -1,11 +1,10 @@
-
 from django.conf import settings
 from django.core.cache import caches
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
 
-# Локальний кеш для автоматичних тестів
+# Локальний кеш для авто тестів
 @override_settings(
     CACHES={
         "default": {

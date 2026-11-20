@@ -11,12 +11,6 @@ logger = logging.getLogger(__name__)
 
 
 def send_order_confirmation(order_id):
-    """
-    Надсилає покупцю email про створення замовлення.
-
-    Працює як зі звичайним SMTP,
-    так і з тестовим console backend.
-    """
 
     try:
         order = (
@@ -63,8 +57,6 @@ def send_order_confirmation(order_id):
         )
 
     except Exception:
-        # Помилка email не повинна скасувати
-        # вже збережене замовлення.
         logger.exception(
             "Не вдалося надіслати email замовлення №%s.",
             order_id
@@ -73,18 +65,10 @@ def send_order_confirmation(order_id):
 
 # EMAIL ПРИ ЗМІНІ СТАТУСУ
 def send_order_status_email(order_id, expected_status):
-    """
-    Надсилає повідомлення про зміну статусу.
-
-    У тестовому режимі лист виводиться
-    в термінал VS Code.
-    """
 
     try:
         order = Order.objects.get(pk=order_id)
 
-        # Не надсилаємо лист зі старим статусом,
-        # якщо він уже змінився ще раз.
         if order.status != expected_status:
             logger.info(
                 "Пропущено застарілий email для замовлення №%s.",

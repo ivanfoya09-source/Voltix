@@ -33,7 +33,7 @@ def review_create_or_edit(request, product_slug):
             slug=product.slug,
         )
 
-    # Якщо відгук уже існує, редагуємо його.
+    # редагування відгуку
     review = Review.objects.filter(
         product=product,
         user=request.user,
@@ -51,8 +51,6 @@ def review_create_or_edit(request, product_slug):
             saved_review.product = product
             saved_review.user = request.user
 
-            # Кожен новий або змінений відгук
-            # повторно надходить на модерацію.
             saved_review.is_approved = False
             saved_review.save()
 

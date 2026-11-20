@@ -1,4 +1,3 @@
-"""VOLTIX: tests for catalog, product models and cache invalidation."""
 from decimal import Decimal
 
 from django.core.cache import cache
@@ -83,7 +82,6 @@ class StoreTests(TestCase):
         cache.set(HOME_NEW, "new", 300)
         cache.set(HOME_FEATURED, "featured", 300)
 
-        # TestCase wraps tests in a transaction; run on_commit callbacks explicitly.
         with self.captureOnCommitCallbacks(execute=True):
             self.product.save()
 

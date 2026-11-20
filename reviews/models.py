@@ -1,4 +1,3 @@
-
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -9,7 +8,7 @@ from orders.models import Order, OrderItem
 
 
 class Review(models.Model):
-    # 1. Товар, на який залишили відгук
+    # Товар, на який залишили відгук
     product = models.ForeignKey(
         "store.Product",
         on_delete=models.CASCADE,
@@ -17,7 +16,7 @@ class Review(models.Model):
         verbose_name="Товар",
     )
 
-    # 2. Автор відгуку
+    # Автор відгуку
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -25,7 +24,7 @@ class Review(models.Model):
         verbose_name="Покупець",
     )
 
-    # 3. Оцінка від 1 до 5
+    # Оцінка від 1 до 5
     rating = models.PositiveSmallIntegerField(
         validators=[
             MinValueValidator(1),
@@ -34,18 +33,18 @@ class Review(models.Model):
         verbose_name="Оцінка",
     )
 
-    # 4. Заголовок
+    # Заголовок
     title = models.CharField(
         max_length=150,
         verbose_name="Заголовок відгуку",
     )
 
-    # 5. Текст відгуку
+    # Текст відгуку
     comment = models.TextField(
         verbose_name="Текст відгуку",
     )
 
-    # 6. Переваги та недоліки
+    # Переваги та недоліки
     advantages = models.TextField(
         blank=True,
         verbose_name="Переваги",
@@ -56,14 +55,14 @@ class Review(models.Model):
         verbose_name="Недоліки",
     )
 
-    # 7. Модерація
+    # Модерація
     is_approved = models.BooleanField(
         default=False,
         db_index=True,
         verbose_name="Схвалено модератором",
     )
 
-    # 8. Дати
+    # Дати
     created_at = models.DateTimeField(
         default=timezone.now,
         verbose_name="Дата створення",
@@ -98,9 +97,7 @@ class Review(models.Model):
 
     @staticmethod
     def has_purchased_product(user, product):
-        """
-        Перевіряє, чи отримав користувач цей товар.
-        """
+
         if not user or not user.pk or not product or not product.pk:
             return False
 
@@ -113,7 +110,6 @@ class Review(models.Model):
     def clean(self):
         super().clean()
 
-        # Перевіряємо підтверджену покупку при створенні.
         if (
             self._state.adding
             and self.user_id is not None
